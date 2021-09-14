@@ -1,5 +1,6 @@
 package com.a404.boardgamers.Board.Domain.Entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -19,6 +20,13 @@ import java.sql.Timestamp;
 @DynamicUpdate
 @DynamicInsert
 public class Board {
+    @Builder
+    public Board(String writerId, String title, String content) {
+        this.writerId = writerId;
+        this.title = title;
+        this.content = content;
+    }
+
     @Id
     private int id;
     private String writerId;

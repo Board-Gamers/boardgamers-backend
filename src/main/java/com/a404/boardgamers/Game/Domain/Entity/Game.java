@@ -1,5 +1,6 @@
 package com.a404.boardgamers.Game.Domain.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "boardgame")

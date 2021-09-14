@@ -3,7 +3,6 @@ package com.a404.boardgamers.Board.Domain.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.logging.log4j.message.TimestampMessage;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 

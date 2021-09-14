@@ -1,4 +1,4 @@
-package com.a404.boardgamers.Board2.Dto;
+package com.a404.boardgamers.Board.Dto;
 
 public class BoardDTO {
 }
