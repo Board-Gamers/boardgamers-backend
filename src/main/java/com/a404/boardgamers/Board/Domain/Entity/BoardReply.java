@@ -1,27 +1,29 @@
-package com.a404.boardworld.User.Domain.Entity;
+package com.a404.boardgamers.Board.Domain.Entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.logging.log4j.message.TimestampMessage;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "user")
+@Table(name = "qna_reply")
 @ToString
 @DynamicUpdate
 @DynamicInsert
-public class User {
+public class BoardReply {
     @Id
-    private String id;
-    private String nickname;
-    private String password;
-
+    private int id;
+    private int qnaId;
+    private String title;
+    private String content;
+    private Timestamp addDate;
 }
