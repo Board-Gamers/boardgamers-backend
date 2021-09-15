@@ -21,10 +21,12 @@ import java.sql.Timestamp;
 @DynamicInsert
 public class Board {
     @Builder
-    public Board(String writerId, String title, String content) {
+    public Board(String writerId, String writerNickname, String title, String content, int viewCnt) {
         this.writerId = writerId;
+        this.writerNickname = writerNickname;
         this.title = title;
         this.content = content;
+        this.viewCnt = viewCnt;
     }
 
     @Id
@@ -33,6 +35,12 @@ public class Board {
     private String writerNickname;
     private String title;
     private String content;
+    private int viewCnt;
     private Timestamp addDate;
     private Timestamp editDate;
+
+    public void updateBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
