@@ -28,19 +28,18 @@ public class User {
     }
 
     @Id
-    @Column(name="id", nullable = false)
+    @Column(name = "id", nullable = false)
     private String id;
-    @Column(name="nickname", nullable = false)
+    @Column(name = "nickname", nullable = false)
     private String nickname;
-    @Column(name="password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
-    @Column(name="gender", nullable = true)
-    private boolean gender;
-    @Column(name="age", nullable = true)
-    private int age;
-    @Column(name="is_admin", nullable = false)
+    @Column(name = "gender", nullable = true)
+    private Boolean gender;
+    @Column(name = "age", nullable = true)
+    private Integer age;
+    @Column(name = "is_admin", nullable = false)
     private boolean isAdmin;
-    @Column(name="is_withdraw", nullable = false)
+    @Column(name = "is_withdraw", nullable = false)
     private boolean isWithdraw;
-
 }
