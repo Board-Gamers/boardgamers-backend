@@ -1,6 +1,8 @@
-package com.a404.boardgamers.Config;
+package com.a404.boardgamers.Security.config;
 
-import com.a404.boardgamers.User.Domain.Repository.UserRepository;
+import com.a404.boardgamers.Security.filter.CustomAuthenticationFilter;
+import com.a404.boardgamers.Security.jwt.CustomAuthenticationProvider;
+import com.a404.boardgamers.Security.jwt.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -23,29 +25,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
-    private final UserRepository userRepository;
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // csrf().disable() => csrf 공격을 막기 위한 부분 제거
-        // 해당 작업 수행하지 않으면 에러 발생하기 때문에 disabled
-
-//        http.httpBasic().disable();
-        // authorizeRequests => 인증을 처리하는 부분을 설정할 떄 사용용
         http.csrf().disable().cors().configurationSource(corsConfigurationSource()).and()
                 .authorizeRequests()
-                // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 한다.
                 .anyRequest().permitAll()
                 .and()
-                // 토큰을 활용하면 세션이 필요 없으므로 세션 사용x
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                // form 쓰지 않음 => JSON으로만 주세요!
                 .formLogin()
                 .disable()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

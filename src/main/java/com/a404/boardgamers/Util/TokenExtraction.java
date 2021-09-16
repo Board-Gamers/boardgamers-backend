@@ -1,6 +1,8 @@
 package com.a404.boardgamers.Util;
 
-import com.a404.boardgamers.Config.AuthConstants;
+
+import com.a404.boardgamers.Security.jwt.AuthConstants;
+import com.a404.boardgamers.Security.jwt.TokenUtils;
 import io.jsonwebtoken.Claims;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,16 +1,16 @@
-package com.a404.boardgamers.Config;
+package com.a404.boardgamers.Security.config;
 
+import com.a404.boardgamers.Security.filter.HeaderFilter;
+import com.a404.boardgamers.Security.jwt.JwtTokenInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.*;
 
-// 정적 리소스에 대한 설정
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
-    // 패턴에 들어가는 값이 토큰이 필요한 url이다.
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtTokenInterceptor()).addPathPatterns(AuthorizationCheck.getObject().getPathList());
@@ -43,9 +43,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new JwtTokenInterceptor();
     }
 
-    // 정적 리소스 위치 목록
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
-            "classpath:/static/", "class:/public/", "classpath:/resources", "classpath:/META-INF/resources/webjars"
+            "classpath:/static/",
+            "class:/public/",
+            "classpath:/resources",
+            "classpath:/META-INF/resources/webjars"
     };
 
     @Override

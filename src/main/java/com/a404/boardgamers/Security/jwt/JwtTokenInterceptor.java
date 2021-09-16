@@ -1,6 +1,5 @@
-package com.a404.boardgamers.Config;
+package com.a404.boardgamers.Security.jwt;
 
-import com.a404.boardgamers.Util.TokenUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.HandlerInterceptor;
 
