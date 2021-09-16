@@ -1,6 +1,8 @@
 package com.a404.boardgamers.Board.Controller;
 
 import com.a404.boardgamers.Board.Dto.BoardDTO;
+import com.a404.boardgamers.Board.Dto.BoardReplyDTO;
+import com.a404.boardgamers.Board.Service.BoardReplyService;
 import com.a404.boardgamers.Board.Service.BoardService;
 import com.a404.boardgamers.Util.Response;
 import io.swagger.annotations.ApiImplicitParam;
@@ -18,10 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
+    private final BoardReplyService boardReplyService;
 
     @ApiOperation(value = "문의글을 업로드한다.")
     @PostMapping("/upload")
-    public ResponseEntity<Response> uploadQuestion(@RequestBody BoardDTO.BoardUploadRequest boardUploadRequest, HttpServletRequest httpServletRequest){
+    public ResponseEntity uploadQuestion(@RequestBody BoardDTO.BoardUploadRequest boardUploadRequest, HttpServletRequest httpServletRequest){
         System.out.println("컨트롤러 동작");
         return boardService.uploadQuestion(boardUploadRequest, httpServletRequest);
     }
@@ -57,5 +60,23 @@ public class BoardController {
         }else {
             return boardService.getQuestionList(page, pageSize);
         }
+    }
+
+    @ApiOperation(value = "답글을 작성합니다.")
+    @PostMapping("/reply")
+    public ResponseEntity addAnswer(@RequestBody BoardReplyDTO.BoardReplyRequest boardReplyRequest, HttpServletRequest httpServletRequest) {
+        return boardReplyService.addAnswer(boardReplyRequest, httpServletRequest);
+    }
+
+    @ApiOperation(value = "답글을 수정합니다.")
+    @PutMapping("/reply")
+    public ResponseEntity updateAnswer(@RequestBody BoardReplyDTO.BoardReplyUpdateRequest boardReplyUpdateRequest, HttpServletRequest httpServletRequest) {
+        return boardReplyService.updateAnswer(boardReplyUpdateRequest, httpServletRequest);
+    }
+
+    @ApiOperation(value = "답글을 삭제합니다.")
+    @DeleteMapping("/reply")
+    public ResponseEntity deleteAnswer(@RequestParam int id, HttpServletRequest httpServletRequest) {
+        return boardReplyService.deleteAnswer(id, httpServletRequest);
     }
 }

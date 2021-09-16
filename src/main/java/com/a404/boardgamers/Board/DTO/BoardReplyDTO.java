@@ -7,6 +7,27 @@ public class BoardReplyDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class BoardReplyRequest{
+        private Integer qnaId;
+        private String title;
+        private String content;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class BoardReplyUpdateRequest{
+        private int id;
+        private Integer qnaId;
+        private String title;
+        private String content;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class BoardReplyResponse{
         private int qnaId;
         private String title;
