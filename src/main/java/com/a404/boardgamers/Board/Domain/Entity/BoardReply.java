@@ -24,6 +24,5 @@ public class BoardReply {
     private int qnaId;
     private String title;
     private String content;
-    private String writerNickname;
     private Timestamp addDate;
 }

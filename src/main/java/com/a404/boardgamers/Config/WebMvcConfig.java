@@ -3,6 +3,7 @@ package com.a404.boardgamers.Config;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.*;
 
 // 정적 리소스에 대한 설정
@@ -12,7 +13,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     // 패턴에 들어가는 값이 토큰이 필요한 url이다.
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtTokenInterceptor()).addPathPatterns(AuthorizationCheck.getInstance().getPathList());
+        registry.addInterceptor(jwtTokenInterceptor()).addPathPatterns(AuthorizationCheck.getObject().getPathList());
     }
 
     @Override

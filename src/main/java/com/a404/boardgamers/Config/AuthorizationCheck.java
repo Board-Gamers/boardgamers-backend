@@ -13,7 +13,7 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/board/upload");
     }
 
-    public static AuthorizationCheck getInstance() {
+    public static AuthorizationCheck getObject() {
         if (object == null) {
             object = new AuthorizationCheck();
         }
