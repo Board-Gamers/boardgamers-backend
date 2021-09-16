@@ -35,9 +35,9 @@ public class User {
     @Column(name="password", nullable = false)
     private String password;
     @Column(name="gender", nullable = true)
-    private boolean gender;
+    private Boolean gender;
     @Column(name="age", nullable = true)
-    private int age;
+    private Integer age;
     @Column(name="is_admin", nullable = false)
     private boolean isAdmin;
     @Column(name="is_withdraw", nullable = false)
