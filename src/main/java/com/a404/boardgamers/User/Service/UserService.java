@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -18,7 +20,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public ResponseEntity<Response> signUp(UserDTO.signUp requestDTO) {
+    public ResponseEntity<Response> signUp(UserDTO.signUpDTO requestDTO) {
         String id = requestDTO.getId();
         String nickname = requestDTO.getNickname();
         if (userRepository.findUserById(id).isPresent()) {
@@ -35,5 +37,30 @@ public class UserService {
                 .build();
         userRepository.save(user);
         return Response.newResult(HttpStatus.OK, "회원가입이 완료되었습니다.", null);
+    }
+
+    @Transactional
+    public ResponseEntity<Response> updateInfo(String userId, UserDTO.updateInfoDTO requestDTO) {
+        Optional<User> optionalUser = userRepository.findUserById(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
+        }
+        User user = optionalUser.get();
+        user.updateInfo(requestDTO.getNickname(), requestDTO.getAge(), requestDTO.getGender());
+        return Response.newResult(HttpStatus.OK, "회원정보가 수정되었습니다.", null);
+    }
+
+    @Transactional
+    public ResponseEntity<Response> changePassword(String userId, UserDTO.changePasswordDTO requestDTO) {
+        Optional<User> optionalUser = userRepository.findUserById(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
+        }
+        User user = optionalUser.get();
+        if (!passwordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.", null);
+        }
+        user.changePassword(passwordEncoder.encode(requestDTO.getNewPassword()));
+        return Response.newResult(HttpStatus.OK, "비밀번호가 변경되었습니다.", null);
     }
 }
