@@ -1,8 +1,6 @@
 package com.a404.boardgamers.Board.Domain.Entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -12,7 +10,9 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 @Entity
 @Table(name = "qna_reply")
 @ToString
@@ -25,4 +25,9 @@ public class BoardReply {
     private String title;
     private String content;
     private Timestamp addDate;
+
+    public void updateReply(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
 }

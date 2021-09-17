@@ -1,9 +1,6 @@
 package com.a404.boardgamers.Board.Domain.Entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -13,19 +10,15 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 @Entity
 @Table(name = "qna")
 @ToString
 @DynamicUpdate
 @DynamicInsert
 public class Board {
-    @Builder
-    public Board(String writerId, String title, String content) {
-        this.writerId = writerId;
-        this.title = title;
-        this.content = content;
-    }
 
     @Id
     private int id;
@@ -33,6 +26,12 @@ public class Board {
     private String writerNickname;
     private String title;
     private String content;
+    private int viewCnt;
     private Timestamp addDate;
     private Timestamp editDate;
+
+    public void updateBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
