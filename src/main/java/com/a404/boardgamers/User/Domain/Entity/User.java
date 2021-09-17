@@ -42,4 +42,14 @@ public class User {
     private boolean isAdmin;
     @Column(name = "is_withdraw", nullable = false)
     private boolean isWithdraw;
+
+    public void updateInfo(String nickname, Integer age, Boolean gender) {
+        this.nickname = nickname;
+        this.age = age;
+        this.gender = gender;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }
