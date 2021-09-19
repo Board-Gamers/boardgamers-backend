@@ -50,6 +50,9 @@ dependencies {
     implementation 'org.imgscalr:imgscalr-lib:4.2'
 
     implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testImplementation 'junit:junit:4.12'
 }
 
 test {
