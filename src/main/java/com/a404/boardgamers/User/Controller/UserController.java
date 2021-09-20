@@ -44,4 +44,16 @@ public class UserController {
         }
         return userService.changePassword(userId, requestDTO);
     }
+
+    @GetMapping("/{nickname}")
+    public ResponseEntity<Response> getReviewByNickname(@PathVariable String nickname, @RequestParam(required = false) String type) {
+        if (type == null) {
+            return userService.getProfile(nickname);
+        } else if (type.equals("review")) {
+            return userService.getReviewByNickname(nickname);
+        } else if (type.equals("favorite")) {
+            return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+        }
+        return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
+    }
 }

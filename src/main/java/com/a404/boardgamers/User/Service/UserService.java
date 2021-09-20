@@ -1,5 +1,7 @@
 package com.a404.boardgamers.User.Service;
 
+import com.a404.boardgamers.Review.Domain.Entity.Review;
+import com.a404.boardgamers.Review.Domain.Repository.ReviewRepository;
 import com.a404.boardgamers.User.DTO.UserDTO;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
@@ -11,12 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
@@ -63,4 +67,34 @@ public class UserService {
         user.changePassword(passwordEncoder.encode(requestDTO.getNewPassword()));
         return Response.newResult(HttpStatus.OK, "비밀번호가 변경되었습니다.", null);
     }
+
+    public ResponseEntity<Response> getProfile(String nickname) {
+        Optional<User> optionalUser = userRepository.findUserByNickname(nickname);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        User user = optionalUser.get();
+        if (user.isWithdraw()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 유저입니다.", null);
+        }
+        UserDTO.userProfile profile = new UserDTO.userProfile(user.getNickname());
+        return Response.newResult(HttpStatus.OK, nickname + "유저의 정보를 출력합니다.", profile);
+    }
+
+    public ResponseEntity<Response> getReviewByNickname(String nickname) {
+        Optional<User> optionalUser = userRepository.findUserByNickname(nickname);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        User user = optionalUser.get();
+        if (user.isWithdraw()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 유저입니다.", null);
+        }
+        List<Review> reviewList = reviewRepository.findByUser(user.getId());
+        if (reviewList.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "작성한 리뷰가 없습니다.", null);
+        }
+        return Response.newResult(HttpStatus.OK, nickname + "유저가 작성한 리뷰를 출력합니다.", reviewList);
+    }
+
 }

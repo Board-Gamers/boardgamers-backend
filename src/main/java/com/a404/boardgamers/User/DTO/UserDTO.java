@@ -3,7 +3,6 @@ package com.a404.boardgamers.User.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 public class UserDTO {
 
@@ -35,6 +34,14 @@ public class UserDTO {
     public static class changePasswordDTO {
         String password;
         String newPassword;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class userProfile {
+        String nickname;
+
     }
 
 }
