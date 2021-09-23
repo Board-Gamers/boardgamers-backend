@@ -90,7 +90,7 @@ public class UserService {
         if (user.isWithdraw()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 유저입니다.", null);
         }
-        List<Review> reviewList = reviewRepository.findByUser(user.getId());
+        List<Review> reviewList = reviewRepository.findByUserNickname(nickname);
         if (reviewList.size() == 0) {
             return Response.newResult(HttpStatus.OK, "작성한 리뷰가 없습니다.", null);
         }
