@@ -21,15 +21,17 @@ import javax.persistence.Table;
 @DynamicInsert
 public class User {
     @Builder
-    public User(String id, String nickname, String password) {
-        this.id = id;
+    public User(String loginId, String nickname, String password) {
+        this.loginId = loginId;
         this.nickname = nickname;
         this.password = password;
     }
 
     @Id
     @Column(name = "id", nullable = false)
-    private String id;
+    private int id;
+    @Column(name = "login_id", nullable = false)
+    private String loginId;
     @Column(name = "nickname", nullable = false)
     private String nickname;
     @Column(name = "password", nullable = false)

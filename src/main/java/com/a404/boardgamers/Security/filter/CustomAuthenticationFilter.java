@@ -20,19 +20,18 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final UsernamePasswordAuthenticationToken authRequst;
+        final UsernamePasswordAuthenticationToken authRequest;
         try {
             final User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-            if (user.getId() == null || user.getPassword() == null) {
+            if (user.getLoginId() == null || user.getPassword() == null) {
                 throw new InputNotFoundException();
             }
-
-            authRequst = new UsernamePasswordAuthenticationToken(user.getId(), user.getPassword());
+            authRequest = new UsernamePasswordAuthenticationToken(user.getLoginId(), user.getPassword());
         } catch (IOException e) {
             throw new InputNotFoundException();
         }
 
-        setDetails(request, authRequst);
-        return this.getAuthenticationManager().authenticate(authRequst);
+        setDetails(request, authRequest);
+        return this.getAuthenticationManager().authenticate(authRequest);
     }
 }

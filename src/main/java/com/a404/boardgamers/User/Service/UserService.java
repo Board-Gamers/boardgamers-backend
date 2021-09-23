@@ -27,7 +27,7 @@ public class UserService {
     public ResponseEntity<Response> signUp(UserDTO.signUpDTO requestDTO) {
         String id = requestDTO.getId();
         String nickname = requestDTO.getNickname();
-        if (userRepository.findUserById(id).isPresent()) {
+        if (userRepository.findUserByLoginId(id).isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다.", null);
         }
         if (userRepository.findUserByNickname(nickname).isPresent()) {
@@ -35,7 +35,7 @@ public class UserService {
         }
         requestDTO.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
         User user = User.builder()
-                .id(id)
+                .loginId(id)
                 .nickname(nickname)
                 .password(requestDTO.getPassword())
                 .build();
@@ -45,7 +45,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<Response> updateInfo(String userId, UserDTO.updateInfoDTO requestDTO) {
-        Optional<User> optionalUser = userRepository.findUserById(userId);
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
         }
@@ -56,7 +56,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<Response> changePassword(String userId, UserDTO.changePasswordDTO requestDTO) {
-        Optional<User> optionalUser = userRepository.findUserById(userId);
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
         }
@@ -95,6 +95,16 @@ public class UserService {
             return Response.newResult(HttpStatus.OK, "작성한 리뷰가 없습니다.", null);
         }
         return Response.newResult(HttpStatus.OK, nickname + "유저가 작성한 리뷰를 출력합니다.", reviewList);
+    }
+
+    @Transactional
+    public ResponseEntity<Response> deleteUser(String userId) {
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        userRepository.delete(optionalUser.get());
+        return Response.newResult(HttpStatus.OK, "회원탈퇴가 완료되었습니다.", null);
     }
 
 }
