@@ -29,7 +29,7 @@ public class TokenUtils {
 
     public static String generateJwtToken(User user) {
         JwtBuilder builder = Jwts.builder()
-                .setSubject(user.getId())
+                .setSubject(user.getLoginId())
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
                 .setExpiration(createExpireDateForOneWeek())
@@ -75,7 +75,7 @@ public class TokenUtils {
 
     private static Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+        claims.put("id", user.getLoginId());
         return claims;
     }
 

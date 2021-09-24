@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetailsImpl loadUserByUsername(String id) {
-        Optional<User> OptionalUser = userRepository.findById(id);
+        Optional<User> OptionalUser = userRepository.findUserByLoginId(id);
         if (!OptionalUser.isPresent()) {
             throw new UsernameNotFoundException(String.format("The username %s doesn't exist", id));
         }

@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,7 +23,9 @@ public class Review {
     @Id
     private int id;
 
-    private String user;
+    private int userId;
+
+    private String userNickname;
 
     private Double rating;
 
@@ -32,8 +35,10 @@ public class Review {
 
     private int gameId;
 
+    //@Column(name = "created_at")
     private Timestamp createdAt;
 
+    //@Column(name = "updated_at")
     private Timestamp updatedAt;
 
 }
