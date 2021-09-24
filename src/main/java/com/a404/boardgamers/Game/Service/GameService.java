@@ -1,8 +1,8 @@
 package com.a404.boardgamers.Game.Service;
 
+import com.a404.boardgamers.Game.DTO.GameDTO;
 import com.a404.boardgamers.Game.Domain.Entity.Game;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
-import com.a404.boardgamers.Game.Dto.GameDTO;
 import com.a404.boardgamers.Util.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +24,7 @@ public class GameService {
         }
         String titleKor = item.get().getNameKor() == null ? "" : item.get().getNameKor();
         GameDTO.GameDetailResponse game = GameDTO.GameDetailResponse.builder()
+                .id(item.get().getId())
                 .name(item.get().getName())
                 .nameKor(titleKor)
                 .description(item.get().getDescription())
@@ -90,6 +91,7 @@ public class GameService {
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
             arr.add(GameDTO.GameListResponse.builder()
+                    .id(item.getId())
                     .thumbnail(item.getThumbnail())
                     .name(item.getName())
                     .nameKor(titleKor)

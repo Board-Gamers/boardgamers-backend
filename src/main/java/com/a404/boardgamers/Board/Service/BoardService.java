@@ -32,7 +32,7 @@ public class BoardService {
     public ResponseEntity uploadQuestion(BoardDTO.BoardUploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
 //        System.out.println(uploadRequest.getWriterNickname() + " > " + uploadRequest.getTitle());
         String userId = TokenExtraction.check(httpServletRequest);
-        Optional<User> user = userRepository.findUserById(userId);
+        Optional<User> user = userRepository.findUserByLoginId(userId);
 //        Optional<User> user = userRepository.findUserById(uploadRequest.getWriterNickname());
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.", null);
@@ -41,7 +41,7 @@ public class BoardService {
         Board question = Board.builder()
                 .title(uploadRequest.getTitle())
                 .content(uploadRequest.getContent())
-                .writerId(user.get().getId())
+                .writerId(user.get().getLoginId())
                 .writerNickname(user.get().getNickname())
                 .build();
         Board questionRequest = boardRepository.save(question);
@@ -85,7 +85,7 @@ public class BoardService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-        Optional<User> user = userRepository.findUserById(userId);
+        Optional<User> user = userRepository.findUserByLoginId(userId);
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.", null);
         }
