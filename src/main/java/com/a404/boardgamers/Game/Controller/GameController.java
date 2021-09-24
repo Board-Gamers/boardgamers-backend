@@ -35,6 +35,7 @@ public class GameController {
                                               @RequestParam(defaultValue = "") String category,
                                               @RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
+
         if (keyword.equals("") && category.equals("")) {
             try {
                 return gameService.findAllGames(page, pageSize);
@@ -48,4 +49,13 @@ public class GameController {
         }
     }
 
+    @ApiOperation(value = "게임 전체 리스트 검색")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    public ResponseEntity<Response> getGameList(@RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "10") int pageSize) {
+        return gameService.findAllGames(page, pageSize);
+    }
 }

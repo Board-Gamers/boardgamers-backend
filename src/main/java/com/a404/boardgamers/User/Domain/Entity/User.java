@@ -20,6 +20,12 @@ import javax.persistence.Table;
 @DynamicUpdate
 @DynamicInsert
 public class User {
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Column(name = "login_id", nullable = false)
+    private String loginId;
+
     @Builder
     public User(String loginId, String nickname, String password) {
         this.loginId = loginId;
@@ -27,11 +33,6 @@ public class User {
         this.password = password;
     }
 
-    @Id
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "login_id", nullable = false)
-    private String loginId;
     @Column(name = "nickname", nullable = false)
     private String nickname;
     @Column(name = "password", nullable = false)
