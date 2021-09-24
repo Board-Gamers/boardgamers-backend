@@ -1,6 +1,9 @@
-package com.a404.boardgamers.Game.Dto;
+package com.a404.boardgamers.Game.DTO;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class GameDTO {
     @Data
@@ -8,6 +11,7 @@ public class GameDTO {
     @AllArgsConstructor
     @Builder
     public static class GameListResponse {
+        private int id;
         private String thumbnail;
         private String name;
         private String nameKor;
@@ -21,6 +25,7 @@ public class GameDTO {
     @AllArgsConstructor
     @Builder
     public static class GameDetailResponse {
+        private int id;
         private String name;
         private String nameKor;
         private String image;
