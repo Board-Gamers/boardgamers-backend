@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimestampToDateString {
-    public static String convertDate(Timestamp writtenTime){
+    public static String convertDate(Timestamp writtenTime) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
 //        Date date = new Date();
 //        Timestamp timestamp = new Timestamp(date.getTime());

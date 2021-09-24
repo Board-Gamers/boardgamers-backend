@@ -1,4 +1,4 @@
-package com.a404.boardgamers.Board.Dto;
+package com.a404.boardgamers.Board.DTO;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ public class BoardReplyDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class BoardReplyRequest{
+    public static class BoardReplyRequest {
         private Integer qnaId;
         private String title;
         private String content;
@@ -17,7 +17,7 @@ public class BoardReplyDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class BoardReplyUpdateRequest{
+    public static class BoardReplyUpdateRequest {
         private int id;
         private Integer qnaId;
         private String title;
@@ -28,7 +28,7 @@ public class BoardReplyDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class BoardReplyResponse{
+    public static class BoardReplyResponse {
         private int qnaId;
         private String title;
         private String content;

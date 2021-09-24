@@ -1,4 +1,4 @@
-package com.a404.boardgamers.Game.Dto;
+package com.a404.boardgamers.Game.DTO;
 
 import lombok.*;
 
@@ -16,6 +16,7 @@ public class GameDTO {
         private int usersRated;
         private int rank;
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

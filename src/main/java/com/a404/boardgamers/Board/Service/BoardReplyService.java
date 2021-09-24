@@ -2,7 +2,7 @@ package com.a404.boardgamers.Board.Service;
 
 import com.a404.boardgamers.Board.Domain.Entity.BoardReply;
 import com.a404.boardgamers.Board.Domain.Repository.BoardReplyRepository;
-import com.a404.boardgamers.Board.Dto.BoardReplyDTO;
+import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
@@ -21,12 +21,12 @@ public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
     private final UserRepository userRepository;
 
-    public ResponseEntity addAnswer(BoardReplyDTO.BoardReplyRequest replyRequest, HttpServletRequest httpServletRequest){
+    public ResponseEntity<Response> addAnswer(BoardReplyDTO.BoardReplyRequest replyRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }
@@ -48,12 +48,12 @@ public class BoardReplyService {
         return Response.newResult(HttpStatus.OK, "문의글에 답을 달았습니다.", reply);
     }
 
-    public ResponseEntity updateAnswer(BoardReplyDTO.BoardReplyUpdateRequest replyUpdateRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> updateAnswer(BoardReplyDTO.BoardReplyUpdateRequest replyUpdateRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }
@@ -74,12 +74,12 @@ public class BoardReplyService {
         return Response.newResult(HttpStatus.OK, "답글을 수정했습니다.", boardReply.get());
     }
 
-    public ResponseEntity deleteAnswer(int id, HttpServletRequest httpServletRequest){
+    public ResponseEntity<Response> deleteAnswer(int id, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }
