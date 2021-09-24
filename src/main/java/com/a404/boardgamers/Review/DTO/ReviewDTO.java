@@ -43,8 +43,8 @@ public class ReviewDTO {
         private int id;
         private Double rating;
         private String comment;
-        private String gameName;
-        private int gameId;
+//        private String gameName;
+//        private int gameId;
     }
 
 }

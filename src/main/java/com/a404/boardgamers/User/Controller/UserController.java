@@ -44,4 +44,28 @@ public class UserController {
         }
         return userService.changePassword(userId, requestDTO);
     }
+
+    @GetMapping("/{nickname}")
+    public ResponseEntity<Response> getReviewByNickname(@PathVariable String nickname, @RequestParam(required = false) String type) {
+        if (type == null) {
+            return userService.getProfile(nickname);
+        } else if (type.equals("review")) {
+            return userService.getReviewByNickname(nickname);
+        } else if (type.equals("favorite")) {
+            return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+        }
+        return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Response> deleteUser(@PathVariable String id, HttpServletRequest request) {
+        String userId = TokenToId.getId(request);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "로그인 후 이용해주세요.", null);
+        }
+        if (!id.equals(userId)) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "자신의 계정만 이용 가능합니다.", null);
+        }
+        return userService.deleteUser(userId);
+    }
 }

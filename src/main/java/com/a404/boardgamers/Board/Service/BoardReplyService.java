@@ -26,7 +26,7 @@ public class BoardReplyService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }
@@ -53,7 +53,7 @@ public class BoardReplyService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }
@@ -79,7 +79,7 @@ public class BoardReplyService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
-        Optional<User> userOptional = userRepository.findUserById(userId);
+        Optional<User> userOptional = userRepository.findUserByLoginId(userId);
         if (!userOptional.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
         }

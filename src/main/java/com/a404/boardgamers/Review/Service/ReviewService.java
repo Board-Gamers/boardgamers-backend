@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class ReviewService {
                     .gameId(gameId)
                     .gameName(game.get().getName())
                     .gameNameKor(nameKor)
-                    .userNickname(item.getUser())
+                    .userNickname(item.getUserNickname())
                     .comment(item.getComment())
                     .rating(item.getRating())
                     .createdAt(item.getCreatedAt())
@@ -63,23 +64,24 @@ public class ReviewService {
         return Response.newResult(HttpStatus.OK, gameId + "번 ", linkedHashMap);
     }
 
+    @Transactional
     public ResponseEntity addGameReview(@RequestBody ReviewDTO.ReviewInsertRequest reviewInsertRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenToId.getId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-        Optional<User> user = userRepository.findUserById(userId);
+        Optional<User> user = userRepository.findUserByLoginId(userId);
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "유효하지 않은 접근입니다.", null);
         }
         // 해당 게임에 리뷰 남긴 적이 있으면 처리하기
-//        Optional<Review> optionalReview = reviewRepository.findReviewByGameIdAndUser(reviewInsertRequest.getGameId(), userId);
-//        if (optionalReview.isPresent()) {
-//
-//        }
+        Optional<Review> optionalReview = reviewRepository.findReviewByGameIdAndUserId(reviewInsertRequest.getGameId(), user.get().getId());
+        if (optionalReview.isPresent()) {
+
+        }
         Review review = Review.builder()
-//                .userId(userId)
-                .user(user.get().getNickname())
+                .userId(user.get().getId())
+                .userNickname(user.get().getNickname())
                 .gameName(reviewInsertRequest.getGameName())
                 .rating(reviewInsertRequest.getRating())
                 .gameId(reviewInsertRequest.getGameId())
@@ -91,15 +93,24 @@ public class ReviewService {
         return Response.newResult(HttpStatus.OK, "평가를 남겼습니다.", review);
     }
 
+    @Transactional
     public ResponseEntity updateGameReview(@RequestBody ReviewDTO.ReviewUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.getId(httpServletRequest);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
+        }
         Optional<Review> optReview = reviewRepository.findById(updateRequest.getId());
         if (!optReview.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "일치하는 리뷰가 없습니다.", null);
+        }
+        if (!userId.equals(optReview.get().getUserNickname())) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "직접 작성한 평가만 수정할 수 있습니다.", null);
         }
         optReview.get().updateReview(updateRequest.getRating(), updateRequest.getComment());
         return Response.newResult(HttpStatus.OK, "리뷰를 수정하였습니다.", optReview.get());
     }
 
+    @Transactional
     public ResponseEntity deleteGameReview(int id, HttpServletRequest httpServletRequest) {
         String userId = TokenToId.getId(httpServletRequest);
         if (userId == null) {
@@ -110,7 +121,7 @@ public class ReviewService {
         if (!optReview.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 리뷰입니다.", null);
         }
-        if (!userId.equals(optReview.get().getUser())) {
+        if (!userId.equals(optReview.get().getUserNickname())) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "직접 작성한 평가만 수정할 수 있습니다.", null);
         }
         reviewRepository.delete(optReview.get());
