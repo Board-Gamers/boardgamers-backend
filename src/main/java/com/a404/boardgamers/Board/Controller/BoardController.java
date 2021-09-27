@@ -1,10 +1,9 @@
 package com.a404.boardgamers.Board.Controller;
 
-import com.a404.boardgamers.Board.Dto.BoardDTO;
-import com.a404.boardgamers.Board.Dto.BoardReplyDTO;
+import com.a404.boardgamers.Board.DTO.BoardDTO;
+import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.Board.Service.BoardReplyService;
 import com.a404.boardgamers.Board.Service.BoardService;
-import com.a404.boardgamers.Util.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -24,14 +23,14 @@ public class BoardController {
 
     @ApiOperation(value = "문의글을 업로드한다.")
     @PostMapping("/upload")
-    public ResponseEntity uploadQuestion(@RequestBody BoardDTO.BoardUploadRequest boardUploadRequest, HttpServletRequest httpServletRequest){
+    public ResponseEntity uploadQuestion(@RequestBody BoardDTO.BoardUploadRequest boardUploadRequest, HttpServletRequest httpServletRequest) {
         System.out.println("컨트롤러 동작");
         return boardService.uploadQuestion(boardUploadRequest, httpServletRequest);
     }
 
     @ApiOperation(value = "게시판에 업로드된 문의글을 가져온다.")
     @GetMapping("/{id}")
-    public ResponseEntity getQuestion(@PathVariable int id){
+    public ResponseEntity getQuestion(@PathVariable int id) {
         return boardService.getQuestion(id);
     }
 
@@ -54,10 +53,10 @@ public class BoardController {
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/list")
-    public ResponseEntity getQuestionList(@RequestParam(defaultValue = "") String keyword, @RequestParam(defaultValue = "1")int page, @RequestParam(defaultValue = "10")int pageSize) {
-        if(!keyword.equals("")){
+    public ResponseEntity getQuestionList(@RequestParam(defaultValue = "") String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+        if (!keyword.equals("")) {
             return boardService.findQuestionsByKeyword(keyword, page, pageSize);
-        }else {
+        } else {
             return boardService.getQuestionList(page, pageSize);
         }
     }

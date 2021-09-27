@@ -20,6 +20,7 @@ public class GameDTO {
         private int usersRated;
         private int rank;
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

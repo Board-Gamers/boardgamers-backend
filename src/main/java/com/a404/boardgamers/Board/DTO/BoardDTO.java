@@ -1,4 +1,4 @@
-package com.a404.boardgamers.Board.Dto;
+package com.a404.boardgamers.Board.DTO;
 
 import lombok.*;
 
@@ -34,6 +34,7 @@ public class BoardDTO {
         // 조회수
         private int viewCnt;
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
