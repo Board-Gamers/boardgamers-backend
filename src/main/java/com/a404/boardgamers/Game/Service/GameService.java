@@ -68,8 +68,16 @@ public class GameService {
         ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
+            String imageUrl;
+            if (item.getImage().length() > 0) {
+                imageUrl = item.getImage();
+            } else if (item.getThumbnail().length() > 0) {
+                imageUrl = item.getThumbnail();
+            } else {
+                imageUrl = "";
+            }
             arr.add(GameDTO.GameListResponse.builder()
-                    .thumbnail(item.getThumbnail())
+                    .image(imageUrl)
                     .name(item.getName())
                     .nameKor(titleKor)
                     .category(item.getCategory())
@@ -99,9 +107,17 @@ public class GameService {
         ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
+            String imageUrl;
+            if (item.getImage().length() > 0) {
+                imageUrl = item.getImage();
+            } else if (item.getThumbnail().length() > 0) {
+                imageUrl = item.getThumbnail();
+            } else {
+                imageUrl = "";
+            }
             arr.add(GameDTO.GameListResponse.builder()
                     .id(item.getId())
-                    .thumbnail(item.getThumbnail())
+                    .image(imageUrl)
                     .name(item.getName())
                     .nameKor(titleKor)
                     .category(item.getCategory())
@@ -128,8 +144,16 @@ public class GameService {
         ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
+            String imageUrl;
+            if (item.getImage().length() > 0) {
+                imageUrl = item.getImage();
+            } else if (item.getThumbnail().length() > 0) {
+                imageUrl = item.getThumbnail();
+            } else {
+                imageUrl = "";
+            }
             arr.add(GameDTO.GameListResponse.builder()
-                    .thumbnail(item.getThumbnail())
+                    .image(imageUrl)
                     .name(item.getName())
                     .nameKor(titleKor)
                     .category(item.getCategory())
@@ -159,9 +183,17 @@ public class GameService {
             if (ratePredictCalc < 3.0f) {
                 continue;
             }
+            String imageUrl;
+            if (game.getImage().length() > 0) {
+                imageUrl = game.getImage();
+            } else if (game.getThumbnail().length() > 0) {
+                imageUrl = game.getThumbnail();
+            } else {
+                imageUrl = "";
+            }
             arr.add(GameRecommendDTO.GameListResponse.builder()
                     .id(item.getGameId())
-                    .thumbnail(game.getThumbnail())
+                    .image(imageUrl)
                     .name(game.getName()) // 영어 이름
                     .nameKor(titleKor) // 한글 이름 있다면
                     .category(game.getCategory())
@@ -186,9 +218,17 @@ public class GameService {
             if (ratePredictCalc < 3.0f) {
                 continue;
             }
+            String imageUrl;
+            if (game.getImage().length() > 0) {
+                imageUrl = game.getImage();
+            } else if (game.getThumbnail().length() > 0) {
+                imageUrl = game.getThumbnail();
+            } else {
+                imageUrl = "";
+            }
             arr.add(GameRecommendDTO.GameListResponse.builder()
                     .id(item.getGameId())
-                    .thumbnail(game.getThumbnail())
+                    .image(imageUrl)
                     .name(game.getName()) // 영어 이름
                     .nameKor(titleKor) // 한글 이름 있다면
                     .category(game.getCategory())
