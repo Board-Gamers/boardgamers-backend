@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-
 public class ReviewDTO {
     @Data
     @NoArgsConstructor
@@ -21,7 +19,7 @@ public class ReviewDTO {
         private String gameName;
         private String gameNameKor;
         private int gameId;
-        private Timestamp createdAt;
+        private String createdAt;
     }
 
     @Data
