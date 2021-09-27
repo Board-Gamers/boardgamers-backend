@@ -8,6 +8,7 @@ import com.a404.boardgamers.Review.Domain.Repository.ReviewRepository;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
+import com.a404.boardgamers.Util.TimestampToDateString;
 import com.a404.boardgamers.Util.TokenToId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -56,7 +57,7 @@ public class ReviewService {
                     .userNickname(item.getUserNickname())
                     .comment(item.getComment())
                     .rating(item.getRating())
-                    .createdAt(item.getCreatedAt())
+                    .createdAt(TimestampToDateString.convertDate(item.getCreatedAt()))
                     .build());
         }
         linkedHashMap.put("reviews", arr);

@@ -1,21 +1,30 @@
 package com.a404.boardgamers.Game.Service;
 
 import com.a404.boardgamers.Game.DTO.GameDTO;
+import com.a404.boardgamers.Game.DTO.GameRecommendDTO;
 import com.a404.boardgamers.Game.Domain.Entity.Game;
+import com.a404.boardgamers.Game.Domain.Entity.GameRecommend;
+import com.a404.boardgamers.Game.Domain.Repository.GameRecommendRepository;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
+import com.a404.boardgamers.User.Domain.Entity.User;
+import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
+import com.a404.boardgamers.Util.TokenToId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class GameService {
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
+    private final GameRecommendRepository gameRecommendRepository;
 
     public ResponseEntity getGameInformation(int id) {
         Optional<Game> item = gameRepository.findGameById(id);
@@ -131,5 +140,65 @@ public class GameService {
         }
         linkedHashMap.put("games", arr);
         return Response.newResult(HttpStatus.OK, category + "의 게임 목록을 불러옵니다.", arr);
+    }
+
+    public ResponseEntity findGameRecommendationsByUserId(HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.getId(httpServletRequest);
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
+        }
+
+        List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(optionalUser.get().getId() + 1000000);
+        // 우리 DB의 유저 id 1번 == 추천 결과 user_id 1000001번
+        ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
+        for (GameRecommend item : recommendList) {
+            Game game = gameRepository.findGameById(item.getGameId()).get();
+            String titleKor = game.getNameKor() != null ? game.getNameKor() : "";
+            double ratePredictCalc = (double) Math.round((item.getPredictedRate() * 100) / 100);
+            if (ratePredictCalc < 3.0f) {
+                continue;
+            }
+            arr.add(GameRecommendDTO.GameListResponse.builder()
+                    .id(item.getGameId())
+                    .thumbnail(game.getThumbnail())
+                    .name(game.getName()) // 영어 이름
+                    .nameKor(titleKor) // 한글 이름 있다면
+                    .category(game.getCategory())
+                    .averageRate(game.getAverageRate())
+                    .predictedRate(ratePredictCalc)
+                    .usersRated(game.getUsersRated())
+//                    .rank(item.getRank())
+                    .predictedRank(item.getRank())
+                    .build());
+        }
+        return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
+    }
+
+    public ResponseEntity findGameRecommendationsByUserId(int userId) {
+        List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(userId);
+        ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
+        for (GameRecommend item : recommendList) {
+            System.out.println(item.getGameId());
+            Game game = gameRepository.findGameById(item.getGameId()).get();
+            String titleKor = game.getNameKor() != null ? game.getNameKor() : "";
+            double ratePredictCalc = (double) Math.round((item.getPredictedRate() * 10) / 10.0);
+            if (ratePredictCalc < 3.0f) {
+                continue;
+            }
+            arr.add(GameRecommendDTO.GameListResponse.builder()
+                    .id(item.getGameId())
+                    .thumbnail(game.getThumbnail())
+                    .name(game.getName()) // 영어 이름
+                    .nameKor(titleKor) // 한글 이름 있다면
+                    .category(game.getCategory())
+                    .averageRate(game.getAverageRate())
+                    .predictedRate(ratePredictCalc)
+                    .usersRated(game.getUsersRated())
+//                    .rank(item.getRank())
+                    .predictedRank(item.getRank())
+                    .build());
+        }
+        return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
     }
 }

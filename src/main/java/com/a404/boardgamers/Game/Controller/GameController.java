@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
@@ -55,5 +57,11 @@ public class GameController {
     public ResponseEntity getGameList(@RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int pageSize) {
         return gameService.findAllGames(page, pageSize);
+    }
+
+    @ApiOperation(value = "추천 결과 반환")
+    @GetMapping("/recommend")
+    public ResponseEntity findRecommendation(HttpServletRequest httpServletRequest) {
+        return gameService.findGameRecommendationsByUserId(httpServletRequest);
     }
 }
