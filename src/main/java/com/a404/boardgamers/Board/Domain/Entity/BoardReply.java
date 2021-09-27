@@ -26,7 +26,7 @@ public class BoardReply {
     private String content;
     private Timestamp addDate;
 
-    public void updateReply(String title, String content){
+    public void updateReply(String title, String content) {
         this.title = title;
         this.content = content;
     }

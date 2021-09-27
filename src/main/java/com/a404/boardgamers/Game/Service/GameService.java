@@ -26,7 +26,7 @@ public class GameService {
     private final UserRepository userRepository;
     private final GameRecommendRepository gameRecommendRepository;
 
-    public ResponseEntity getGameInformation(int id) {
+    public ResponseEntity<Response> getGameInformation(int id) {
         Optional<Game> item = gameRepository.findGameById(id);
         if (!item.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "불가능한 접근입니다.", null);
@@ -54,7 +54,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", game);
     }
 
-    public ResponseEntity findGamesByKeyword(String keyword, int page, int pageSize) {
+    public ResponseEntity<Response> findGamesByKeyword(String keyword, int page, int pageSize) {
 
         long totalItemCount = gameRepository.countGamesByNameContainsOrNameKorContains(keyword, keyword);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
@@ -83,7 +83,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, keyword + "로 검색한 게임 정보입니다.", linkedHashMap);
     }
 
-    public ResponseEntity findAllGames(int page, int pageSize){
+    public ResponseEntity<Response> findAllGames(int page, int pageSize) {
         long totalItemCount = gameRepository.countAll();
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);
@@ -115,7 +115,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "전체 게임을 불러옵니다.", linkedHashMap);
     }
 
-    public ResponseEntity findGamesByCategory(String category, int page, int pageSize) {
+    public ResponseEntity<Response> findGamesByCategory(String category, int page, int pageSize) {
         long totalItemCount = gameRepository.countGamesByCategoryContains(category);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);

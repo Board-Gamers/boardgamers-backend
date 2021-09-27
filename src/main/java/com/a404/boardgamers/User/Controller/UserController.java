@@ -1,5 +1,6 @@
 package com.a404.boardgamers.User.Controller;
 
+import com.a404.boardgamers.Exception.PageIndexLessThanZeroException;
 import com.a404.boardgamers.User.DTO.UserDTO;
 import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
@@ -46,13 +47,19 @@ public class UserController {
     }
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<Response> getReviewByNickname(@PathVariable String nickname, @RequestParam(required = false) String type) {
-        if (type == null) {
-            return userService.getProfile(nickname);
-        } else if (type.equals("review")) {
-            return userService.getReviewByNickname(nickname);
-        } else if (type.equals("favorite")) {
-            return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+    public ResponseEntity<Response> getReviewByNickname(@PathVariable String nickname, @RequestParam(required = false) String type,
+                                                        @RequestParam(defaultValue = "1") int page,
+                                                        @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
+        try {
+            if (type == null) {
+                return userService.getProfile(nickname);
+            } else if (type.equals("review")) {
+                return userService.getReviewByNickname(nickname, page, pageSize);
+            } else if (type.equals("favorite")) {
+                return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+            }
+        } catch (ArithmeticException | IllegalArgumentException e) {
+            throw new PageIndexLessThanZeroException();
         }
         return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
     }

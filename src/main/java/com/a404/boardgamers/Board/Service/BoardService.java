@@ -4,8 +4,8 @@ import com.a404.boardgamers.Board.Domain.Entity.Board;
 import com.a404.boardgamers.Board.Domain.Entity.BoardReply;
 import com.a404.boardgamers.Board.Domain.Repository.BoardReplyRepository;
 import com.a404.boardgamers.Board.Domain.Repository.BoardRepository;
-import com.a404.boardgamers.Board.Dto.BoardDTO;
-import com.a404.boardgamers.Board.Dto.BoardReplyDTO;
+import com.a404.boardgamers.Board.DTO.BoardDTO;
+import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
@@ -29,15 +29,12 @@ public class BoardService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ResponseEntity uploadQuestion(BoardDTO.BoardUploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
-//        System.out.println(uploadRequest.getWriterNickname() + " > " + uploadRequest.getTitle());
+    public ResponseEntity<Response> uploadQuestion(BoardDTO.BoardUploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         Optional<User> user = userRepository.findUserByLoginId(userId);
-//        Optional<User> user = userRepository.findUserById(uploadRequest.getWriterNickname());
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.", null);
         }
-//        System.out.println(uploadRequest.getContent() + " >>> by " + uploadRequest.getWriterNickname());
         Board question = Board.builder()
                 .title(uploadRequest.getTitle())
                 .content(uploadRequest.getContent())
@@ -48,8 +45,11 @@ public class BoardService {
         return Response.newResult(HttpStatus.OK, "문의사항을 등록하였습니다.", questionRequest);
     }
 
-    public ResponseEntity getQuestion(int id) {
+    public ResponseEntity<Response> getQuestion(int id) {
         Optional<Board> question = boardRepository.findBoardById(id);
+        if (!question.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "해당 게시글이 없습니다.", null);
+        }
         String questionUploadedDate = TimestampToDateString.convertDate(question.get().getAddDate());
         BoardDTO.BoardResponse questionResponse = BoardDTO.BoardResponse.builder()
                 .id(question.get().getId())
@@ -80,7 +80,7 @@ public class BoardService {
     }
 
     @Transactional
-    public ResponseEntity updateQuestion(BoardDTO.BoardUpdateRequest boardUpdateRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> updateQuestion(BoardDTO.BoardUpdateRequest boardUpdateRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
@@ -99,10 +99,10 @@ public class BoardService {
             return Response.newResult(HttpStatus.BAD_REQUEST, "자신이 작성한 게시글만 수정할 수 있습니다.", null);
         }
         question.get().updateBoard(boardUpdateRequest.getTitle(), boardUpdateRequest.getContent());
-        return Response.newResult(HttpStatus.OK, "게시글이 수정되었습니다.", question.get() );
+        return Response.newResult(HttpStatus.OK, "게시글이 수정되었습니다.", question.get());
     }
 
-    public ResponseEntity deleteQuestion(int id, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> deleteQuestion(int id, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
@@ -123,7 +123,7 @@ public class BoardService {
         return Response.newResult(HttpStatus.OK, "게시글이 삭제되었습니다.", null);
     }
 
-    public ResponseEntity getQuestionList(int page, int pageSize) {
+    public ResponseEntity<Response> getQuestionList(int page, int pageSize) {
         long totalItemCount = boardRepository.countAllByTitleIsNotNull();
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);
@@ -148,7 +148,7 @@ public class BoardService {
         return Response.newResult(HttpStatus.OK, "문의글을 불러왔습니다.", linkedHashMap);
     }
 
-    public ResponseEntity findQuestionsByKeyword(String keyword, int page, int pageSize) {
+    public ResponseEntity<Response> findQuestionsByKeyword(String keyword, int page, int pageSize) {
         long totalItemCount = boardRepository.countBoardsByTitleContains(keyword);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);
