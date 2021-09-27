@@ -78,7 +78,7 @@ public class GameService {
                     .rank(item.getRank())
                     .build());
         }
-        linkedHashMap.put("list", arr);
+        linkedHashMap.put("games", arr);
 
         return Response.newResult(HttpStatus.OK, keyword + "로 검색한 게임 정보입니다.", linkedHashMap);
     }
