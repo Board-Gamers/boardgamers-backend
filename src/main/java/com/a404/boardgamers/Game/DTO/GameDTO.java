@@ -12,7 +12,7 @@ public class GameDTO {
     @Builder
     public static class GameListResponse {
         private int id;
-        private String thumbnail;
+        private String image;
         private String name;
         private String nameKor;
         private String category;
