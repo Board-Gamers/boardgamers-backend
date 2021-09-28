@@ -77,6 +77,7 @@ public class GameService {
                 imageUrl = "";
             }
             arr.add(GameDTO.GameListResponse.builder()
+                    .id(item.getId())
                     .image(imageUrl)
                     .name(item.getName())
                     .nameKor(titleKor)
