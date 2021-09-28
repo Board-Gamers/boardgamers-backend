@@ -14,7 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -50,6 +53,10 @@ public class UserService {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
         }
         User user = optionalUser.get();
+        Optional<User> checkNickUser = userRepository.findUserByNickname(requestDTO.getNickname());
+        if (checkNickUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.", null);
+        }
         user.updateInfo(requestDTO.getNickname(), requestDTO.getAge(), requestDTO.getGender());
         return Response.newResult(HttpStatus.OK, "회원정보가 수정되었습니다.", null);
     }
