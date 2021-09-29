@@ -87,7 +87,7 @@ public class ReviewService {
                     .build(), httpServletRequest);
         }
         Optional<Game> optionalGame = gameRepository.findGameById(reviewInsertRequest.getGameId());
-        if (!optionalReview.isPresent()) {
+        if (!optionalGame.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게임에 대해 평점을 남기실 수 없습니다.", null);
         }
         Review review = Review.builder()
