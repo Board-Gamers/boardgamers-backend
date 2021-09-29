@@ -40,9 +40,9 @@ public class ReviewController {
         }
     }
 
-//    @ApiOperation(value = "평가 삭제하기")
-//    @DeleteMapping
-//    public ResponseEntity deleteGameReview(@RequestParam int id, HttpServletRequest httpServletRequest) {
-//        return reviewService.deleteGameReview(id, httpServletRequest);
-//    }
+    @ApiOperation(value = "평가 삭제하기")
+    @DeleteMapping
+    public ResponseEntity deleteGameReview(@RequestParam int id, HttpServletRequest httpServletRequest) {
+        return reviewService.deleteGameReview(id, httpServletRequest);
+    }
 }

@@ -13,6 +13,7 @@ public class GameDTO {
     public static class GameListResponse {
         private int id;
         private String image;
+        private String thumbnail;
         private String name;
         private String nameKor;
         private String category;
@@ -29,6 +30,7 @@ public class GameDTO {
         private int id;
         private String name;
         private String nameKor;
+        private String thumbnail;
         private String image;
         private String description;
         private int yearPublished;
@@ -39,9 +41,9 @@ public class GameDTO {
         private String category;
         private String playType;
         private String series;
-//        private String designer;
-//        private String artist;
-//        private String publisher;
+        private String designer;
+        private String artist;
+        private String publisher;
         private int usersRated;
         private Double averageRate;
         private int rank;
