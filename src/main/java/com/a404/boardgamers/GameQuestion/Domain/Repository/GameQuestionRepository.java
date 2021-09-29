@@ -1,0 +1,14 @@
+package com.a404.boardgamers.GameQuestion.Domain.Repository;
+
+import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface GameQuestionRepository extends JpaRepository<GameQuestion, Integer> {
+
+    List<GameQuestion> findAllByGameId(int gameId, Pageable pageable);
+
+    long countByGameId(int gameId);
+}
