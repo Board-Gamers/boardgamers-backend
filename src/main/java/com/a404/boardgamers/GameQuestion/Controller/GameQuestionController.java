@@ -16,12 +16,16 @@ public class GameQuestionController {
     private final GameQuestionService gameQuestionService;
 
     @GetMapping("/qna")
-    public ResponseEntity<Response> getGameQnA(@RequestParam Integer gameId,
+    public ResponseEntity<Response> getGameQnA(@RequestParam(required = false) Integer gameId,
+                                               @RequestParam(required = false) Integer questionId,
                                                @RequestParam(defaultValue = "1") int page,
                                                @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
-        if (gameId == null) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "게임 아이디를 입력해주세요.", null);
+
+        if (gameId != null && questionId == null) {
+            return gameQuestionService.getGameQuestion(gameId, page, pageSize);
+        } else if (gameId == null && questionId != null) {
+            return gameQuestionService.getGameQuestionAnswer(questionId);
         }
-        return gameQuestionService.getGameQuestion(gameId, page, pageSize);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
     }
 }
