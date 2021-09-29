@@ -109,11 +109,15 @@ public class ReviewService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
         }
+        Optional<User> optUser = userRepository.findUserByLoginId(userId);
+        if (!optUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
         Optional<Review> optReview = reviewRepository.findById(updateRequest.getId());
         if (!optReview.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "일치하는 리뷰가 없습니다.", null);
         }
-        if (!userId.equals(optReview.get().getUserNickname())) {
+        if (optUser.get().getId() != optReview.get().getUserId()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "직접 작성한 평가만 수정할 수 있습니다.", null);
         }
         optReview.get().updateReview(updateRequest.getRating(), updateRequest.getComment());
@@ -126,13 +130,16 @@ public class ReviewService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
         }
-//        Optional<User> optUser = userRepository.findUserById(userId);
+        Optional<User> optUser = userRepository.findUserByLoginId(userId);
+        if (!optUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
         Optional<Review> optReview = reviewRepository.findById(id);
         if (!optReview.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 리뷰입니다.", null);
         }
-        if (!userId.equals(optReview.get().getUserNickname())) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "직접 작성한 평가만 수정할 수 있습니다.", null);
+        if (optUser.get().getId() != optReview.get().getUserId()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "직접 작성한 평가만 삭제할 수 있습니다.", null);
         }
         reviewRepository.delete(optReview.get());
         return Response.newResult(HttpStatus.OK, "리뷰가 삭제되었습니다.", null);
