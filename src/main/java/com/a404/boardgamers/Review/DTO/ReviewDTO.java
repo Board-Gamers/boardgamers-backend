@@ -29,7 +29,6 @@ public class ReviewDTO {
     public static class ReviewInsertRequest {
         private Double rating;
         private String comment;
-        private String gameName;
         private int gameId;
     }
 

@@ -51,6 +51,8 @@ public class ReviewService {
             String nameKor = game.get().getNameKor() == null ? "" : game.get().getNameKor();
             System.out.println(item.getComment());
             arr.add(ReviewDTO.ReviewDetailResponse.builder()
+                    .id(item.getId())
+                    .userId(item.getUserId())
                     .gameId(gameId)
                     .gameName(game.get().getName())
                     .gameNameKor(nameKor)
@@ -78,15 +80,22 @@ public class ReviewService {
         // 해당 게임에 리뷰 남긴 적이 있으면 처리하기
         Optional<Review> optionalReview = reviewRepository.findReviewByGameIdAndUserId(reviewInsertRequest.getGameId(), user.get().getId());
         if (optionalReview.isPresent()) {
-
+            return updateGameReview(ReviewDTO.ReviewUpdateRequest.builder()
+                    .id(optionalReview.get().getId())
+                    .comment(reviewInsertRequest.getComment())
+                    .rating(reviewInsertRequest.getRating())
+                    .build(), httpServletRequest);
+        }
+        Optional<Game> optionalGame = gameRepository.findGameById(reviewInsertRequest.getGameId());
+        if (!optionalReview.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게임에 대해 평점을 남기실 수 없습니다.", null);
         }
         Review review = Review.builder()
                 .userId(user.get().getId())
                 .userNickname(user.get().getNickname())
-                .gameName(reviewInsertRequest.getGameName())
+                .gameName(optionalGame.get().getName())
                 .rating(reviewInsertRequest.getRating())
                 .gameId(reviewInsertRequest.getGameId())
-                .gameName(reviewInsertRequest.getGameName())
                 .comment(reviewInsertRequest.getComment())
                 .build();
         reviewRepository.save(review);
