@@ -27,6 +27,22 @@ public class GameQuestionService {
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
     private final UserRepository userRepository;
 
+    public ResponseEntity<Response> getAllGameQuestion(int page, int pageSize) {
+        long totalItemCount = gameQuestionRepository.countAllBy();
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("totalPageItemCnt", totalItemCount);
+        linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        linkedHashMap.put("nowPageSize", pageSize);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+
+        List<GameQuestion> gameQuestionList = gameQuestionRepository.findAllByOrderByAddDate(pageRequest);
+        if (gameQuestionList.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "등록된 글이 없습니다.", null);
+        }
+        return Response.newResult(HttpStatus.OK, "글을 불러왔습니다.", gameQuestionList);
+    }
+
     public ResponseEntity<Response> getGameQuestion(int gameId, int page, int pageSize) {
         long totalItemCount = gameQuestionRepository.countByGameId(gameId);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
