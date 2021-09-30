@@ -1,9 +1,12 @@
 package com.a404.boardgamers.GameQuestion.Service;
 
+import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionAnswerRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionRepository;
+import com.a404.boardgamers.User.Domain.Entity.User;
+import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class GameQuestionService {
     private final GameQuestionRepository gameQuestionRepository;
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<Response> getGameQuestion(int gameId, int page, int pageSize) {
         long totalItemCount = gameQuestionRepository.countByGameId(gameId);
@@ -45,5 +49,28 @@ public class GameQuestionService {
         }
         GameQuestionAnswer gameQuestionAnswer = optionalGameQuestionAnswer.get();
         return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameQuestionAnswer);
+    }
+
+    public ResponseEntity<Response> uploadGameQuestion(String userId, GameQuestionDTO.uploadGameQuestionDTO requestDTO) {
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        User user = optionalUser.get();
+        String nickname = user.getNickname();
+//        System.out.println(requestDTO.getTitle());
+//        System.out.println(requestDTO.getContent());
+//        System.out.println(requestDTO.getGameId());
+        if (requestDTO.getTitle() == null || requestDTO.getContent() == null || requestDTO.getGameId() == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 모두 입력해주세요.", null);
+        }
+        GameQuestion gameQuestion = GameQuestion.builder()
+                .title(requestDTO.getTitle())
+                .content(requestDTO.getContent())
+                .gameId(requestDTO.getGameId())
+                .writerId(nickname)
+                .build();
+        gameQuestionRepository.save(gameQuestion);
+        return Response.newResult(HttpStatus.OK, "글을 작성했습니다.", null);
     }
 }

@@ -16,4 +16,14 @@ public class GameQuestionDTO {
         GameQuestion gameQuestion;
         GameQuestionAnswer gameQuestionAnswer;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class uploadGameQuestionDTO {
+        String title;
+        String content;
+        Integer gameId;
+    }
 }
