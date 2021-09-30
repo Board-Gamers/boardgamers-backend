@@ -1,6 +1,5 @@
 package com.a404.boardgamers.GameQuestion.Service;
 
-import com.a404.boardgamers.Game.Domain.Entity.Game;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
@@ -15,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,12 +25,6 @@ public class GameQuestionService {
     private final UserRepository userRepository;
 
     public ResponseEntity<Response> getAllGameQuestion(int page, int pageSize) {
-        long totalItemCount = gameQuestionRepository.countAllBy();
-        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("totalPageItemCnt", totalItemCount);
-        linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
-        linkedHashMap.put("nowPage", page);
-        linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<GameQuestion> gameQuestionList = gameQuestionRepository.findAllByOrderByAddDate(pageRequest);
@@ -44,12 +35,6 @@ public class GameQuestionService {
     }
 
     public ResponseEntity<Response> getGameQuestion(int gameId, int page, int pageSize) {
-        long totalItemCount = gameQuestionRepository.countByGameId(gameId);
-        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("totalPageItemCnt", totalItemCount);
-        linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
-        linkedHashMap.put("nowPage", page);
-        linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<GameQuestion> gameQuestionList = gameQuestionRepository.findAllByGameId(gameId, pageRequest);
