@@ -1,5 +1,7 @@
 package com.a404.boardgamers.GameQuestion.Service;
 
+import com.a404.boardgamers.Game.Domain.Entity.Game;
+import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
@@ -23,6 +25,7 @@ public class GameQuestionService {
     private final GameQuestionRepository gameQuestionRepository;
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
 
     public ResponseEntity<Response> getAllGameQuestion(int page, int pageSize) {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
@@ -63,6 +66,10 @@ public class GameQuestionService {
         if (requestDTO.getTitle() == null || requestDTO.getContent() == null || requestDTO.getGameId() == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 모두 입력해주세요.", null);
         }
+        Optional<Game> optionalGame = gameRepository.findGameById(requestDTO.getGameId());
+        if (!optionalGame.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게임입니다.", null);
+        }
         GameQuestion gameQuestion = GameQuestion.builder()
                 .title(requestDTO.getTitle())
                 .content(requestDTO.getContent())
@@ -88,9 +95,6 @@ public class GameQuestionService {
         if (!gameQuestion.getWriterId().equals(nickname)) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "자신의 글만 삭제할 수 있습니다.", null);
         }
-        System.out.println(questionId);
-        System.out.println(nickname);
-        System.out.println(gameQuestion.getWriterId());
         gameQuestionRepository.delete(gameQuestion);
         return Response.newResult(HttpStatus.OK, "글을 삭제하였습니다.", null);
     }

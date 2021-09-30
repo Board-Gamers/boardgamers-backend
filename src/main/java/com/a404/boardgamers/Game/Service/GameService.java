@@ -194,7 +194,6 @@ public class GameService {
         List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(userId);
         ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
         for (GameRecommend item : recommendList) {
-            System.out.println(item.getGameId());
             Game game = gameRepository.findGameById(item.getGameId()).get();
             String titleKor = game.getNameKor() != null ? game.getNameKor() : "";
             double ratePredictCalc = (double) Math.round((item.getPredictedRate() * 10) / 10.0);

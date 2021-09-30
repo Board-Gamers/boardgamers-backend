@@ -25,7 +25,6 @@ public class BoardController {
     @ApiOperation(value = "문의글을 업로드한다.")
     @PostMapping("/upload")
     public ResponseEntity<Response> uploadQuestion(@RequestBody BoardDTO.BoardUploadRequest boardUploadRequest, HttpServletRequest httpServletRequest) {
-        System.out.println("컨트롤러 동작");
         return boardService.uploadQuestion(boardUploadRequest, httpServletRequest);
     }
 

@@ -28,7 +28,7 @@ public class GameQuestionController {
             return gameQuestionService.getGameQuestion(gameId, page, pageSize);
         } else if (gameId == null && questionId != null) {
             return gameQuestionService.getGameQuestionAnswer(questionId);
-        } else if (gameId == null && questionId == null){
+        } else if (gameId == null && questionId == null) {
             return gameQuestionService.getAllGameQuestion(page, pageSize);
         }
         return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
@@ -50,8 +50,8 @@ public class GameQuestionController {
         }
         String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
-            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.",  null);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-       return  gameQuestionService.deleteQuestion(userId, questionId);
+        return gameQuestionService.deleteQuestion(userId, questionId);
     }
 }
