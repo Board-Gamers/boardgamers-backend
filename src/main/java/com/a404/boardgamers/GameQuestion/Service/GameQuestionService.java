@@ -1,5 +1,7 @@
 package com.a404.boardgamers.GameQuestion.Service;
 
+import com.a404.boardgamers.Game.Domain.Entity.Game;
+import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
@@ -14,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,14 +25,19 @@ public class GameQuestionService {
     private final GameQuestionRepository gameQuestionRepository;
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
+
+    public ResponseEntity<Response> getAllGameQuestion(int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+
+        List<GameQuestion> gameQuestionList = gameQuestionRepository.findAllByOrderByAddDate(pageRequest);
+        if (gameQuestionList.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "등록된 글이 없습니다.", null);
+        }
+        return Response.newResult(HttpStatus.OK, "글을 불러왔습니다.", gameQuestionList);
+    }
 
     public ResponseEntity<Response> getGameQuestion(int gameId, int page, int pageSize) {
-        long totalItemCount = gameQuestionRepository.countByGameId(gameId);
-        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("totalPageItemCnt", totalItemCount);
-        linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
-        linkedHashMap.put("nowPage", page);
-        linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<GameQuestion> gameQuestionList = gameQuestionRepository.findAllByGameId(gameId, pageRequest);
@@ -61,6 +66,10 @@ public class GameQuestionService {
         if (requestDTO.getTitle() == null || requestDTO.getContent() == null || requestDTO.getGameId() == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 모두 입력해주세요.", null);
         }
+        Optional<Game> optionalGame = gameRepository.findGameById(requestDTO.getGameId());
+        if (!optionalGame.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게임입니다.", null);
+        }
         GameQuestion gameQuestion = GameQuestion.builder()
                 .title(requestDTO.getTitle())
                 .content(requestDTO.getContent())
@@ -69,5 +78,24 @@ public class GameQuestionService {
                 .build();
         gameQuestionRepository.save(gameQuestion);
         return Response.newResult(HttpStatus.OK, "글을 작성했습니다.", null);
+    }
+
+    public ResponseEntity<Response> deleteQuestion(String userId, int questionId) {
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        User user = optionalUser.get();
+        String nickname = user.getNickname();
+        Optional<GameQuestion> optionalGameQuestion = gameQuestionRepository.findById(questionId);
+        if (!optionalGameQuestion.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 글입니다.", null);
+        }
+        GameQuestion gameQuestion = optionalGameQuestion.get();
+        if (!gameQuestion.getWriterId().equals(nickname)) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "자신의 글만 삭제할 수 있습니다.", null);
+        }
+        gameQuestionRepository.delete(gameQuestion);
+        return Response.newResult(HttpStatus.OK, "글을 삭제하였습니다.", null);
     }
 }

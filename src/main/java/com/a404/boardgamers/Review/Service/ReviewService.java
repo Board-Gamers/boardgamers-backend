@@ -44,12 +44,10 @@ public class ReviewService {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
         List<Review> reviewList = reviewRepository.findReviewsByGameId(gameId, pageRequest);
 
-        System.out.println(gameId + " " + game.get().getName() + " > " + reviewList.size());
         ArrayList<ReviewDTO.ReviewDetailResponse> arr = new ArrayList<>();
 
         for (Review item : reviewList) {
             String nameKor = game.get().getNameKor() == null ? "" : game.get().getNameKor();
-            System.out.println(item.getComment());
             arr.add(ReviewDTO.ReviewDetailResponse.builder()
                     .id(item.getId())
                     .userId(item.getUserId())

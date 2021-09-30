@@ -7,7 +7,9 @@ import com.a404.boardgamers.Game.Domain.Entity.GameRecommend;
 import com.a404.boardgamers.Game.Domain.Repository.GameRecommendRepository;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.Review.Domain.Repository.ReviewDataRepository;
+import com.a404.boardgamers.User.Domain.Entity.Favorite;
 import com.a404.boardgamers.User.Domain.Entity.User;
+import com.a404.boardgamers.User.Domain.Repository.FavoriteRepository;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
 import com.a404.boardgamers.Util.TokenExtraction;
@@ -27,6 +29,7 @@ public class GameService {
     private final UserRepository userRepository;
     private final GameRecommendRepository gameRecommendRepository;
     private final ReviewDataRepository reviewDataRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public ResponseEntity<Response> getGameInformation(int id) {
         Optional<Game> item = gameRepository.findGameById(id);
@@ -193,7 +196,6 @@ public class GameService {
         List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(userId);
         ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
         for (GameRecommend item : recommendList) {
-            System.out.println(item.getGameId());
             Game game = gameRepository.findGameById(item.getGameId()).get();
             String titleKor = game.getNameKor() != null ? game.getNameKor() : "";
             double ratePredictCalc = (double) Math.round((item.getPredictedRate() * 10) / 10.0);
@@ -263,5 +265,25 @@ public class GameService {
         linkedHashMap.put("games", arr);
 
         return Response.newResult(HttpStatus.OK, "", linkedHashMap);
+    }
+
+    public ResponseEntity<Response> addFavorite(String userId, int gameId) {
+        Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        Optional<Game> optionalGame = gameRepository.findGameById(gameId);
+        if (!optionalGame.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게임입니다.", null);
+        }
+        Optional<Favorite> optionalFavorite = favoriteRepository.findAllByUserIdAndGameId(userId, gameId);
+        if (!optionalFavorite.isPresent()) {
+            Favorite favorite = new Favorite(userId, gameId);
+            favoriteRepository.save(favorite);
+            return Response.newResult(HttpStatus.OK, "즐겨찾기가 등록되었습니다.", null);
+        }
+        Favorite favorite = optionalFavorite.get();
+        favoriteRepository.delete(favorite);
+        return Response.newResult(HttpStatus.OK, "즐겨찾기가 해제되었습니다.", null);
     }
 }
