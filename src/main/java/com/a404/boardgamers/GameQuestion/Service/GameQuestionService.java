@@ -58,9 +58,6 @@ public class GameQuestionService {
         }
         User user = optionalUser.get();
         String nickname = user.getNickname();
-//        System.out.println(requestDTO.getTitle());
-//        System.out.println(requestDTO.getContent());
-//        System.out.println(requestDTO.getGameId());
         if (requestDTO.getTitle() == null || requestDTO.getContent() == null || requestDTO.getGameId() == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 모두 입력해주세요.", null);
         }

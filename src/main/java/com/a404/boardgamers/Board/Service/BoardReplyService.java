@@ -22,7 +22,7 @@ public class BoardReplyService {
     private final UserRepository userRepository;
 
     public ResponseEntity<Response> addAnswer(BoardReplyDTO.BoardReplyRequest replyRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
@@ -49,7 +49,7 @@ public class BoardReplyService {
     }
 
     public ResponseEntity<Response> updateAnswer(BoardReplyDTO.BoardReplyUpdateRequest replyUpdateRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }
@@ -75,7 +75,7 @@ public class BoardReplyService {
     }
 
     public ResponseEntity<Response> deleteAnswer(int id, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 다시 시도해주십시오.", null);
         }

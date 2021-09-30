@@ -4,7 +4,7 @@ import com.a404.boardgamers.Exception.PageIndexLessThanZeroException;
 import com.a404.boardgamers.User.DTO.UserDTO;
 import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
-import com.a404.boardgamers.Util.TokenToId;
+import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<Response> updateInfo(HttpServletRequest request, @RequestBody UserDTO.updateInfoDTO requestDTO) {
-        String userId = TokenToId.getId(request);
+        String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
@@ -36,7 +36,7 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Response> changePassword(HttpServletRequest request, @PathVariable String id, @RequestBody UserDTO.changePasswordDTO requestDTO) {
-        String userId = TokenToId.getId(request);
+        String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
@@ -66,7 +66,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Response> deleteUser(@PathVariable String id, HttpServletRequest request) {
-        String userId = TokenToId.getId(request);
+        String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "로그인 후 이용해주세요.", null);
         }

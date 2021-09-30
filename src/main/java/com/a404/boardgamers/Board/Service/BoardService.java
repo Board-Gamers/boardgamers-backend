@@ -30,7 +30,7 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<Response> uploadQuestion(BoardDTO.BoardUploadRequest uploadRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         Optional<User> user = userRepository.findUserByLoginId(userId);
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.", null);
@@ -81,7 +81,7 @@ public class BoardService {
 
     @Transactional
     public ResponseEntity<Response> updateQuestion(BoardDTO.BoardUpdateRequest boardUpdateRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
@@ -103,7 +103,7 @@ public class BoardService {
     }
 
     public ResponseEntity<Response> deleteQuestion(int id, HttpServletRequest httpServletRequest) {
-        String userId = TokenExtraction.check(httpServletRequest);
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
         }

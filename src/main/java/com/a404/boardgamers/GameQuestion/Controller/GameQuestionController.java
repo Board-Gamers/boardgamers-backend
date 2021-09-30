@@ -1,10 +1,9 @@
 package com.a404.boardgamers.GameQuestion.Controller;
 
-import com.a404.boardgamers.Exception.PageIndexLessThanZeroException;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
 import com.a404.boardgamers.GameQuestion.Service.GameQuestionService;
 import com.a404.boardgamers.Util.Response;
-import com.a404.boardgamers.Util.TokenToId;
+import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class GameQuestionController {
     public ResponseEntity<Response> getGameQnA(@RequestParam(required = false) Integer gameId,
                                                @RequestParam(required = false) Integer questionId,
                                                @RequestParam(defaultValue = "1") int page,
-                                               @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
+                                               @RequestParam(defaultValue = "10") int pageSize) {
 
         if (gameId != null && questionId == null) {
             return gameQuestionService.getGameQuestion(gameId, page, pageSize);
@@ -35,13 +34,10 @@ public class GameQuestionController {
 
     @PostMapping("/qna")
     public ResponseEntity<Response> uploadQuestion(HttpServletRequest request, @RequestBody GameQuestionDTO.uploadGameQuestionDTO requestDTO) {
-        String userId = TokenToId.getId(request);
+        String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-        System.out.println(requestDTO.getTitle());
-        System.out.println(requestDTO.getContent());
-        System.out.println(requestDTO.getGameId());
         return gameQuestionService.uploadGameQuestion(userId, requestDTO);
     }
 }

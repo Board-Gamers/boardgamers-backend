@@ -9,7 +9,7 @@ import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
-import com.a404.boardgamers.Util.TokenToId;
+import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -152,8 +152,8 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, category + "의 게임 목록을 불러옵니다.", arr);
     }
 
-    public ResponseEntity findGameRecommendationsByUserId(HttpServletRequest httpServletRequest) {
-        String userId = TokenToId.getId(httpServletRequest);
+    public ResponseEntity<Response> findGameRecommendationsByUserId(HttpServletRequest httpServletRequest) {
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
@@ -187,7 +187,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
     }
 
-    public ResponseEntity findGameRecommendationsByUserId(int userId) {
+    public ResponseEntity<Response> findGameRecommendationsByUserId(int userId) {
         List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(userId);
         ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
         for (GameRecommend item : recommendList) {

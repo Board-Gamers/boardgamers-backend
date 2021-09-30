@@ -63,7 +63,7 @@ public class GameController {
 
     @ApiOperation(value = "추천 결과 반환")
     @GetMapping("/recommend")
-    public ResponseEntity findRecommendation(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> findRecommendation(HttpServletRequest httpServletRequest) {
         return gameService.findGameRecommendationsByUserId(httpServletRequest);
     }
 }

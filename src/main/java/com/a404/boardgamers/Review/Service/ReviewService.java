@@ -9,7 +9,7 @@ import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
 import com.a404.boardgamers.Util.TimestampToDateString;
-import com.a404.boardgamers.Util.TokenToId;
+import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class ReviewService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
 
-    public ResponseEntity findGameReviews(int gameId, int page, int pageSize) {
+    public ResponseEntity<Response> findGameReviews(int gameId, int page, int pageSize) {
         Optional<Game> game = gameRepository.findGameById(gameId);
         if (!game.isPresent()) {
             return Response.newResult(HttpStatus.NO_CONTENT, "일치하는 게임이 존재하지 않습니다.", null);
@@ -68,8 +68,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity addGameReview(@RequestBody ReviewDTO.ReviewInsertRequest reviewInsertRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenToId.getId(httpServletRequest);
+    public ResponseEntity<Response> addGameReview(@RequestBody ReviewDTO.ReviewInsertRequest reviewInsertRequest, HttpServletRequest httpServletRequest) {
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
@@ -104,8 +104,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity updateGameReview(@RequestBody ReviewDTO.ReviewUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
-        String userId = TokenToId.getId(httpServletRequest);
+    public ResponseEntity<Response> updateGameReview(@RequestBody ReviewDTO.ReviewUpdateRequest updateRequest, HttpServletRequest httpServletRequest) {
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
         }
@@ -125,8 +125,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity deleteGameReview(int id, HttpServletRequest httpServletRequest) {
-        String userId = TokenToId.getId(httpServletRequest);
+    public ResponseEntity<Response> deleteGameReview(int id, HttpServletRequest httpServletRequest) {
+        String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
         }
