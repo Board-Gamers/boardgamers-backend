@@ -6,6 +6,7 @@ import com.a404.boardgamers.Game.Domain.Entity.Game;
 import com.a404.boardgamers.Game.Domain.Entity.GameRecommend;
 import com.a404.boardgamers.Game.Domain.Repository.GameRecommendRepository;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
+import com.a404.boardgamers.Review.Domain.Repository.ReviewDataRepository;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
@@ -25,6 +26,7 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final GameRecommendRepository gameRecommendRepository;
+    private final ReviewDataRepository reviewDataRepository;
 
     public ResponseEntity<Response> getGameInformation(int id) {
         Optional<Game> item = gameRepository.findGameById(id);
@@ -213,5 +215,53 @@ public class GameService {
                     .build());
         }
         return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
+    }
+
+    public ResponseEntity findGamesOrderByReview(int page, int pageSize) {
+        long totalItemCount = gameRepository.countAll();
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("totalPageItemCnt", totalItemCount);
+        linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        linkedHashMap.put("nowPageSize", pageSize);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Object[]> gamesOrderByReview = reviewDataRepository.findGamesOrderByReviewCnt(pageRequest);
+        ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
+        for (Object[] objects : gamesOrderByReview) {
+            Game item = gameRepository.getById((int) objects[0]);
+            arr.add(
+                    GameDTO.GameListResponse.builder()
+                            .id(item.getId())
+                            .name(item.getName())
+                            .nameKor(item.getNameKor())
+                            .thumbnail(item.getThumbnail())
+                            .image(item.getImage())
+                            .category(item.getImage())
+                            .rank(item.getRank())
+                            .usersRated(item.getUsersRated())
+                            .averageRate(item.getAverageRate())
+                            .build()
+            );
+        }
+        /*List<Game> gameList = gameRepository.findAllGamesOrderByRank(pageRequest);
+
+        for (Game item : gameList) {
+            arr.add(
+                    GameDTO.GameListResponse.builder()
+                            .id(item.getId())
+                            .name(item.getName())
+                            .nameKor(item.getNameKor())
+                            .thumbnail(item.getThumbnail())
+                            .image(item.getImage())
+                            .category(item.getImage())
+                            .rank(item.getRank())
+                            .usersRated(item.getUsersRated())
+                            .averageRate(item.getAverageRate())
+                            .build()
+            );
+        }*/
+        linkedHashMap.put("games", arr);
+
+        return Response.newResult(HttpStatus.OK, "", linkedHashMap);
     }
 }
