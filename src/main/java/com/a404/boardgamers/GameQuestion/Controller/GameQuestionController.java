@@ -40,4 +40,16 @@ public class GameQuestionController {
         }
         return gameQuestionService.uploadGameQuestion(userId, requestDTO);
     }
+
+    @DeleteMapping("/qna/{questionId}")
+    public ResponseEntity<Response> deleteQuestion(HttpServletRequest request, @PathVariable Integer questionId) {
+        if (questionId == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "questionId가 없습니다.", null);
+        }
+        String userId = TokenExtraction.getLoginId(request);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.",  null);
+        }
+       return  gameQuestionService.deleteQuestion(userId, questionId);
+    }
 }
