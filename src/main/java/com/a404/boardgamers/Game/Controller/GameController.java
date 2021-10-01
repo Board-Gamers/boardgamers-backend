@@ -69,6 +69,22 @@ public class GameController {
         return gameService.findGameRecommendationsByUserId(httpServletRequest);
     }
 
+    @ApiOperation(value = "게임 리뷰 많은 순으로 검색하기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "order", value = "검색할 순서", dataType = "String", defaultValue = "review"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    @GetMapping
+    public ResponseEntity findGamesOrderByReview(@RequestParam(defaultValue = "review") String order,
+                                                 @RequestParam(defaultValue = "1") int page,
+                                                 @RequestParam(defaultValue = "20") int pageSize) {
+        if (order.equals("review")) {
+            return gameService.findGamesOrderByReview(page, pageSize);
+        }
+        return gameService.findGamesOrderByReview(page, pageSize);
+    }
+
     @ApiOperation(value = "게임 즐겨찾기. 같은 요청을 보내면 즐겨찾기가 해제됩니다.")
     @PostMapping("/favorite")
     public ResponseEntity<Response> addFavorite(HttpServletRequest httpServletRequest, @RequestParam Integer gameId) {
@@ -80,5 +96,6 @@ public class GameController {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
         return gameService.addFavorite(userId, gameId);
+
     }
 }

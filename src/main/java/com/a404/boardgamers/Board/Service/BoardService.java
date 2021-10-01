@@ -52,6 +52,7 @@ public class BoardService {
         }
         String questionUploadedDate = TimestampToDateString.convertDate(question.get().getAddDate());
         BoardDTO.BoardResponse questionResponse = BoardDTO.BoardResponse.builder()
+                .writerNickname(question.get().getWriterNickname())
                 .id(question.get().getId())
                 .title(question.get().getTitle())
                 .content(question.get().getContent())
