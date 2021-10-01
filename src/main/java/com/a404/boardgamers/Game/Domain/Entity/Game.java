@@ -31,6 +31,7 @@ public class Game {
     private int minPlayers;
     private int maxPlayers;
     private int minPlayTime;
+    private int maxPlayTime;
     private int minAge;
     private String category;
     private String playType;

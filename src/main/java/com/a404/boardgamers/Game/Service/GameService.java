@@ -63,7 +63,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", game);
     }
 
-    public ResponseEntity<Response> findGamesByKeyword(String keyword, int page, int pageSize) {
+    public ResponseEntity<Response> findGamesByKeyword(String keyword, String order, int page, int pageSize) {
 
         long totalItemCount = gameRepository.countGamesByNameContainsOrNameKorContains(keyword, keyword);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
@@ -72,8 +72,12 @@ public class GameService {
         linkedHashMap.put("nowPage", page);
         linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-
-        List<Game> gameList = gameRepository.findGamesByNameContainsOrNameKorContainsOrderByRank(keyword, keyword, pageRequest);
+        List<Game> gameList;
+        if (order.equals("review")) {
+            gameList = gameRepository.findGamesByNameContainsOrNameKorContainsOrDescriptionContainsOrderByUsersRated(keyword, keyword, keyword, pageRequest);
+        } else {
+            gameList = gameRepository.findGamesByNameContainsOrNameKorContainsOrDescriptionContainsOrderByRank(keyword, keyword, keyword, pageRequest);
+        }
         ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
@@ -94,7 +98,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, keyword + "로 검색한 게임 정보입니다.", linkedHashMap);
     }
 
-    public ResponseEntity<Response> findAllGames(int page, int pageSize) {
+    public ResponseEntity<Response> findAllGames(String order, int page, int pageSize) {
         long totalItemCount = gameRepository.countAll();
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);
@@ -102,8 +106,12 @@ public class GameService {
         linkedHashMap.put("nowPage", page);
         linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-
-        List<Game> gameList = gameRepository.findAllGamesOrderByRank(pageRequest);
+        List<Game> gameList;
+        if (order.equals("review")) {
+            gameList = gameRepository.findAllGamesOrderByReview(pageRequest);
+        } else {
+            gameList = gameRepository.findAllGamesOrderByRank(pageRequest);
+        }
         if (gameList.size() == 0) {
             return Response.newResult(HttpStatus.NO_CONTENT, "데이터가 없습니다.", null);
         }
@@ -128,7 +136,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "전체 게임을 불러옵니다.", linkedHashMap);
     }
 
-    public ResponseEntity<Response> findGamesByCategory(String category, int page, int pageSize) {
+    public ResponseEntity<Response> findGamesByCategory(String category, String order, int page, int pageSize) {
         long totalItemCount = gameRepository.countGamesByCategoryContains(category);
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalItemCount);
@@ -137,7 +145,13 @@ public class GameService {
         linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
-        List<Game> gameList = gameRepository.findGamesByCategoryContainsOrderByRank(category, pageRequest);
+        List<Game> gameList;
+        if (order.equals("review")) {
+            gameList = gameRepository.findGamesByCategoryContainsOrderByUsersRatedDesc(category, pageRequest);
+        } else {
+            gameList = gameRepository.findGamesByCategoryContainsOrderByRank(category, pageRequest);
+        }
+
         ArrayList<GameDTO.GameListResponse> arr = new ArrayList<>();
         for (Game item : gameList) {
             String titleKor = item.getNameKor() != null ? item.getNameKor() : "";
@@ -192,32 +206,6 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
     }
 
-    public ResponseEntity<Response> findGameRecommendationsByUserId(int userId) {
-        List<GameRecommend> recommendList = gameRecommendRepository.findGameRecommendsByUserIdOrderByRank(userId);
-        ArrayList<GameRecommendDTO.GameListResponse> arr = new ArrayList<>();
-        for (GameRecommend item : recommendList) {
-            Game game = gameRepository.findGameById(item.getGameId()).get();
-            String titleKor = game.getNameKor() != null ? game.getNameKor() : "";
-            double ratePredictCalc = (double) Math.round((item.getPredictedRate() * 10) / 10.0);
-            if (ratePredictCalc < 3.0f) {
-                continue;
-            }
-            arr.add(GameRecommendDTO.GameListResponse.builder()
-                    .id(item.getGameId())
-                    .thumbnail(game.getThumbnail())
-                    .image(game.getImage())
-                    .name(game.getName()) // 영어 이름
-                    .nameKor(titleKor) // 한글 이름 있다면
-                    .category(game.getCategory())
-                    .averageRate(game.getAverageRate())
-                    .predictedRate(ratePredictCalc)
-                    .usersRated(game.getUsersRated())
-//                    .rank(item.getRank())
-                    .predictedRank(item.getRank())
-                    .build());
-        }
-        return Response.newResult(HttpStatus.OK, "추천 결과를 불러옵니다.", arr);
-    }
 
     public ResponseEntity findGamesOrderByReview(int page, int pageSize) {
         long totalItemCount = gameRepository.countAll();
@@ -245,26 +233,10 @@ public class GameService {
                             .build()
             );
         }
-        /*List<Game> gameList = gameRepository.findAllGamesOrderByRank(pageRequest);
 
-        for (Game item : gameList) {
-            arr.add(
-                    GameDTO.GameListResponse.builder()
-                            .id(item.getId())
-                            .name(item.getName())
-                            .nameKor(item.getNameKor())
-                            .thumbnail(item.getThumbnail())
-                            .image(item.getImage())
-                            .category(item.getImage())
-                            .rank(item.getRank())
-                            .usersRated(item.getUsersRated())
-                            .averageRate(item.getAverageRate())
-                            .build()
-            );
-        }*/
         linkedHashMap.put("games", arr);
 
-        return Response.newResult(HttpStatus.OK, "", linkedHashMap);
+        return Response.newResult(HttpStatus.OK, "리뷰 순서로 정렬된 게임 정보입니다.", linkedHashMap);
     }
 
     public ResponseEntity<Response> addFavorite(String userId, int gameId) {
