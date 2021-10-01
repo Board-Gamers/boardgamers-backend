@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class GameDTO {
     @Data
     @NoArgsConstructor
@@ -38,12 +40,12 @@ public class GameDTO {
         private int maxPlayers;
         private int minPlayTime;
         private int minAge;
-        private String category;
-        private String playType;
-        private String series;
-        private String designer;
-        private String artist;
-        private String publisher;
+        private List<String> category;
+        private List<String> playType;
+        private List<String> series;
+        private List<String> designer;
+        private List<String> artist;
+        private List<String> publisher;
         private int usersRated;
         private Double averageRate;
         private int rank;
