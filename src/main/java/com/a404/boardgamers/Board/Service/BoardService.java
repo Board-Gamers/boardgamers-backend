@@ -1,11 +1,11 @@
 package com.a404.boardgamers.Board.Service;
 
+import com.a404.boardgamers.Board.DTO.BoardDTO;
+import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.Board.Domain.Entity.Board;
 import com.a404.boardgamers.Board.Domain.Entity.BoardReply;
 import com.a404.boardgamers.Board.Domain.Repository.BoardReplyRepository;
 import com.a404.boardgamers.Board.Domain.Repository.BoardRepository;
-import com.a404.boardgamers.Board.DTO.BoardDTO;
-import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
@@ -68,6 +68,7 @@ public class BoardService {
         for (BoardReply item : answers) {
             String itemDate = TimestampToDateString.convertDate(item.getAddDate());
             arr.add(BoardReplyDTO.BoardReplyResponse.builder()
+                    .qnaId(item.getQnaId())
                     .title(item.getTitle())
                     .content(item.getContent())
                     .addDate(itemDate)
