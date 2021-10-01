@@ -1,8 +1,8 @@
 package com.a404.boardgamers.Board.Service;
 
+import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.Board.Domain.Entity.BoardReply;
 import com.a404.boardgamers.Board.Domain.Repository.BoardReplyRepository;
-import com.a404.boardgamers.Board.DTO.BoardReplyDTO;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class BoardReplyService {
     private final BoardReplyRepository boardReplyRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public ResponseEntity<Response> addAnswer(BoardReplyDTO.BoardReplyRequest replyRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
@@ -44,10 +46,12 @@ public class BoardReplyService {
                 .title(replyRequest.getTitle())
                 .content(replyRequest.getContent())
                 .build();
+        boardReplyRepository.save(reply);
 
         return Response.newResult(HttpStatus.OK, "문의글에 답을 달았습니다.", reply);
     }
 
+    @Transactional
     public ResponseEntity<Response> updateAnswer(BoardReplyDTO.BoardReplyUpdateRequest replyUpdateRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
@@ -71,9 +75,11 @@ public class BoardReplyService {
             return Response.newResult(HttpStatus.BAD_REQUEST, "해당 요청을 수행할 수 없습니다.(원인 : 존재하지 않는 댓글)", null);
         }
         boardReply.get().updateReply(replyUpdateRequest.getTitle(), replyUpdateRequest.getContent());
+        boardReplyRepository.findAll();
         return Response.newResult(HttpStatus.OK, "답글을 수정했습니다.", boardReply.get());
     }
 
+    @Transactional
     public ResponseEntity<Response> deleteAnswer(int id, HttpServletRequest httpServletRequest) {
         String userId = TokenExtraction.getLoginId(httpServletRequest);
         if (userId == null) {
