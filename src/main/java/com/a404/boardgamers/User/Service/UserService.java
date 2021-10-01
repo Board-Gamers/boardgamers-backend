@@ -47,7 +47,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Response> updateInfo(String userId, UserDTO.updateInfoDTO requestDTO) {
+    public ResponseEntity<Response> updateInfo(String userId, UserDTO.userProfileDTO requestDTO) {
         Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다.", null);
@@ -84,8 +84,8 @@ public class UserService {
         if (user.isWithdraw()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 유저입니다.", null);
         }
-        UserDTO.userProfile profile = new UserDTO.userProfile(user.getNickname());
-        return Response.newResult(HttpStatus.OK, nickname + "유저의 정보를 출력합니다.", profile);
+        UserDTO.userProfileDTO profile = new UserDTO.userProfileDTO(user.getNickname(), user.getAge(), user.getGender());
+        return Response.newResult(HttpStatus.OK, nickname + " 유저의 정보를 출력합니다.", profile);
     }
 
     public ResponseEntity<Response> getReviewByNickname(String nickname, int page, int pageSize) {

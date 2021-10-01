@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Response> updateInfo(HttpServletRequest request, @RequestBody UserDTO.updateInfoDTO requestDTO) {
+    public ResponseEntity<Response> updateInfo(HttpServletRequest request, @RequestBody UserDTO.userProfileDTO requestDTO) {
         String userId = TokenExtraction.getLoginId(request);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);

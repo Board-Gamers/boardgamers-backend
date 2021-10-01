@@ -22,7 +22,7 @@ public class UserDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class updateInfoDTO {
+    public static class userProfileDTO {
         String nickname;
         Integer age;
         Boolean gender;
@@ -34,14 +34,6 @@ public class UserDTO {
     public static class changePasswordDTO {
         String password;
         String newPassword;
-    }
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    public static class userProfile {
-        String nickname;
-
     }
 
 }
