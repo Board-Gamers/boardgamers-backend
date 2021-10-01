@@ -1,6 +1,9 @@
 package com.a404.boardgamers.Board.DTO;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class BoardReplyDTO {
     @Data

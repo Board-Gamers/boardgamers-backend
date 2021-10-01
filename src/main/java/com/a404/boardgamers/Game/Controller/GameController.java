@@ -31,25 +31,27 @@ public class GameController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "검색할 게임 이름"),
             @ApiImplicitParam(name = "category", value = "검색할 카테고리 이름"),
+            @ApiImplicitParam(name = "order", value = "결과 정렬 조건"),
             @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/search")
     public ResponseEntity<Response> findGames(@RequestParam(defaultValue = "") String keyword,
                                               @RequestParam(defaultValue = "") String category,
+                                              @RequestParam(defaultValue = "rank") String order,
                                               @RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
 
         if (keyword.equals("") && category.equals("")) {
             try {
-                return gameService.findAllGames(page, pageSize);
+                return gameService.findAllGames(order, page, pageSize);
             } catch (ArithmeticException | IllegalArgumentException e) {
                 throw new PageIndexLessThanZeroException();
             }
         } else if (keyword.equals("")) {
-            return gameService.findGamesByCategory(category, page, pageSize);
+            return gameService.findGamesByCategory(category, order, page, pageSize);
         } else {
-            return gameService.findGamesByKeyword(keyword, page, pageSize);
+            return gameService.findGamesByKeyword(keyword, order, page, pageSize);
         }
     }
 
@@ -60,7 +62,7 @@ public class GameController {
     })
     public ResponseEntity<Response> getGameList(@RequestParam(defaultValue = "1") int page,
                                                 @RequestParam(defaultValue = "10") int pageSize) {
-        return gameService.findAllGames(page, pageSize);
+        return gameService.findAllGames("rank", page, pageSize);
     }
 
     @ApiOperation(value = "추천 결과 반환")
