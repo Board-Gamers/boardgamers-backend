@@ -41,6 +41,8 @@ public class GameSpecs {
                             root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
                     ));
                     break;
+                default:
+                    break;
             }
         }
         return predicate;
