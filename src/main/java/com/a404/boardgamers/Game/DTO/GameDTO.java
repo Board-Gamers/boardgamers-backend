@@ -18,6 +18,11 @@ public class GameDTO {
         private String nameKor;
         private String category;
         private Double averageRate;
+        private int minAge;
+        private int maxPlayers;
+        private int minPlayers;
+        private int minPlayTime;
+        private int maxPlayTime;
         private int usersRated;
         private int rank;
     }

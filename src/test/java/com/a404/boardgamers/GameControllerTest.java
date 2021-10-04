@@ -8,10 +8,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -26,14 +24,14 @@ public class GameControllerTest {
 
     @Test
     public void 게임_전체조회() throws Exception {
-        mvc.perform(get("/game/list"))
+        mvc.perform(get("/game/search"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void nameKor로_조회() throws Exception {
-        mvc.perform(get("/game/list")
+    public void 한글이름으로_조회() throws Exception {
+        mvc.perform(get("/game/search")
                 .param("nameKor", "모험")
                 .param("minAge", "12"))
                 .andDo(print())
@@ -42,8 +40,8 @@ public class GameControllerTest {
 
     @Test
     public void 최소인원_최대시간으로_조회() throws Exception {
-        mvc.perform(get("/game/list").param("minplayers", "4").param("maxplaytime", "30"))
+        mvc.perform(get("/game/search").param("minplayers", "4").param("maxplaytime", "30"))
                 .andDo(print())
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(status().isOk());
     }
 }

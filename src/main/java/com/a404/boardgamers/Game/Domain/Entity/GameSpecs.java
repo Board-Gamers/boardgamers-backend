@@ -31,15 +31,24 @@ public class GameSpecs {
                     break;
                 case MINAGE:
                 case MINPLAYERS:
-                    predicate.add(builder.greaterThanOrEqualTo(
-                            root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
-                    ));
+                case MINPLAYTIME:
+                    try {
+                        predicate.add(builder.greaterThanOrEqualTo(
+                                root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
+                        ));
+                    } catch (NumberFormatException e) {
+
+                    }
                     break;
                 case MAXPLAYERS:
                 case MAXPLAYTIME:
-                    predicate.add(builder.lessThanOrEqualTo(
-                            root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
-                    ));
+                    try {
+                        predicate.add(builder.lessThanOrEqualTo(
+                                root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
+                        ));
+                    } catch (NumberFormatException e) {
+
+                    }
                     break;
                 default:
                     break;
@@ -56,6 +65,7 @@ public class GameSpecs {
         MINAGE("minAge"),
         MINPLAYERS("minPlayers"),
         MAXPLAYERS("maxPlayers"),
+        MINPLAYTIME("minPlayTime"),
         MAXPLAYTIME("maxPlayTime");
 
         private final String value;
