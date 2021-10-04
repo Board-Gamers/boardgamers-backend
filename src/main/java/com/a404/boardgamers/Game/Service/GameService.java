@@ -88,6 +88,11 @@ public class GameService {
                     .averageRate(item.getAverageRate())
                     .usersRated(item.getUsersRated())
                     .rank(item.getRank())
+                    .minAge(item.getMinAge())
+                    .minPlayers(item.getMinPlayers())
+                    .maxPlayers(item.getMaxPlayers())
+                    .minPlayTime(item.getMinPlayTime())
+                    .maxPlayTime(item.getMaxPlayTime())
                     .build());
         }
         linkedHashMap.put("games", arr);
@@ -122,6 +127,11 @@ public class GameService {
                     .averageRate(item.getAverageRate())
                     .usersRated(item.getUsersRated())
                     .rank(item.getRank())
+                    .minAge(item.getMinAge())
+                    .minPlayers(item.getMinPlayers())
+                    .maxPlayers(item.getMaxPlayers())
+                    .minPlayTime(item.getMinPlayTime())
+                    .maxPlayTime(item.getMaxPlayTime())
                     .build());
         }
         linkedHashMap.put("games", arr);
@@ -158,7 +168,6 @@ public class GameService {
                     .averageRate(game.getAverageRate())
                     .predictedRate(ratePredictCalc)
                     .usersRated(game.getUsersRated())
-//                    .rank(item.getRank())
                     .predictedRank(item.getRank())
                     .build());
         }
