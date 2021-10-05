@@ -39,31 +39,39 @@ public class GameService {
         if (!item.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "불가능한 접근입니다.", null);
         }
+        Game game = item.get();
         String titleKor = item.get().getNameKor() == null ? "" : item.get().getNameKor();
-        GameDTO.GameDetailResponse game = GameDTO.GameDetailResponse.builder()
+        List<String> categories = parsing(game.getCategory());
+        List<String> playType = parsing(game.getPlayType());
+        List<String> series = parsing(game.getSeries());
+        List<String> designer = parsing(game.getSeries());
+        List<String> artist = parsing(game.getArtist());
+        List<String> publisher = parsing(game.getPublisher());
+
+        GameDTO.GameDetailResponse gameDetail = GameDTO.GameDetailResponse.builder()
                 .id(item.get().getId())
                 .name(item.get().getName())
                 .nameKor(titleKor)
-                .description(item.get().getDescription())
                 .thumbnail(item.get().getThumbnail())
                 .image(item.get().getImage())
-                .averageRate(item.get().getAverageRate())
-                .rank(item.get().getRank())
-                .category(item.get().getCategory())
-                .minAge(item.get().getMinAge())
+                .description(item.get().getDescription())
+                .yearPublished(item.get().getYearPublished())
                 .minPlayers(item.get().getMinPlayers())
                 .maxPlayers(item.get().getMaxPlayers())
                 .minPlayTime(item.get().getMinPlayTime())
+                .minAge(item.get().getMinAge())
+                .category(categories)
+                .playType(playType)
+                .series(series)
+                .designer(designer)
+                .artist(artist)
+                .publisher(publisher)
                 .usersRated(item.get().getUsersRated())
-                .yearPublished(item.get().getYearPublished())
-                .designer(item.get().getDesigner())
-                .artist(item.get().getArtist())
-                .publisher(item.get().getPublisher())
-                .playType(item.get().getPlayType())
-                .series(item.get().getSeries())
+                .averageRate(item.get().getAverageRate())
+                .rank(item.get().getRank())
                 .build();
 
-        return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", game);
+        return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", gameDetail);
     }
 
     public ResponseEntity findAll(String order, int page, int pageSize) {
@@ -193,5 +201,19 @@ public class GameService {
         Favorite favorite = optionalFavorite.get();
         favoriteRepository.delete(favorite);
         return Response.newResult(HttpStatus.OK, "즐겨찾기가 해제되었습니다.", null);
+    }
+
+    public List<String> parsing(String string) {
+        List<String> result = new ArrayList<>();
+        int from = string.indexOf("'", 0);
+        int to = string.indexOf("'", from + 1);
+        while (from != -1 && to != -1) {
+            String piece = string.substring(from + 1, to);
+            System.out.println(from + " " + to + ": " + piece);
+            result.add(piece);
+            from = string.indexOf("'", to + 1);
+            to = string.indexOf("'", from + 1);
+        }
+        return result;
     }
 }

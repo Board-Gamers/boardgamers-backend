@@ -26,4 +26,12 @@ public class GameQuestionDTO {
         String content;
         Integer gameId;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class uploadGameQuestionAnswerDTO {
+        String content;
+    }
 }

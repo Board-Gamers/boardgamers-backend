@@ -43,6 +43,15 @@ public class GameQuestionController {
         return gameQuestionService.uploadGameQuestion(userId, requestDTO);
     }
 
+    @PostMapping("/qna/{questionId}")
+    public ResponseEntity<Response> uploadGameQuestionAnswer(HttpServletRequest request, @PathVariable Integer questionId, @RequestBody GameQuestionDTO.uploadGameQuestionAnswerDTO requestDTO) {
+        String userId = TokenExtraction.getLoginId(request);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
+        }
+        return gameQuestionService.uploadGameQuestionAnswer(userId, questionId, requestDTO);
+    }
+
     @DeleteMapping("/qna/{questionId}")
     public ResponseEntity<Response> deleteQuestion(HttpServletRequest request, @PathVariable Integer questionId) {
         if (questionId == null) {
