@@ -177,4 +177,12 @@ public class BoardService {
         linkedHashMap.put("questions", arr);
         return Response.newResult(HttpStatus.OK, keyword + "로 문의글을 검색하였습니다.", linkedHashMap);
     }
+
+    @Transactional
+    public void viewCountUp(int id) {
+        Optional<Board> optBoard = boardRepository.findById(id);
+        if (optBoard.isPresent()) {
+            optBoard.get().viewCountUp();
+        }
+    }
 }
