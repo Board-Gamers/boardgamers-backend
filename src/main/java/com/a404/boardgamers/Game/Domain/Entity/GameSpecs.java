@@ -22,8 +22,12 @@ public class GameSpecs {
         List<Predicate> predicate = new ArrayList<>();
         for (SearchKey key : searchKeyword.keySet()) {
             switch (key) {
-                case NAME:
-                case NAMEKOR:
+                case KEYWORD:
+                    predicate.add(builder.or(
+                            builder.like(root.get("name"), "%" + searchKeyword.get(key) + "%"),
+                            builder.like(root.get("nameKor"), "%" + searchKeyword.get(key) + "%")
+                    ));
+                    break;
                 case CATEGORY:
                     predicate.add(builder.like(
                             root.get(key.value), "%" + searchKeyword.get(key) + "%"
@@ -37,7 +41,7 @@ public class GameSpecs {
                                 root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
                         ));
                     } catch (NumberFormatException e) {
-
+                        e.printStackTrace();
                     }
                     break;
                 case MAXPLAYERS:
@@ -47,7 +51,7 @@ public class GameSpecs {
                                 root.get(key.value), Integer.valueOf(searchKeyword.get(key).toString())
                         ));
                     } catch (NumberFormatException e) {
-
+                        e.printStackTrace();
                     }
                     break;
                 default:
@@ -59,8 +63,7 @@ public class GameSpecs {
 
 
     public enum SearchKey {
-        NAME("name"),
-        NAMEKOR("nameKor"),
+        KEYWORD("keyword"),
         CATEGORY("category"),
         MINAGE("minAge"),
         MINPLAYERS("minPlayers"),
