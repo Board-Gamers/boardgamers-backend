@@ -68,6 +68,7 @@ public class BoardService {
         for (BoardReply item : answers) {
             String itemDate = TimestampToDateString.convertDate(item.getAddDate());
             arr.add(BoardReplyDTO.BoardReplyResponse.builder()
+                    .id(item.getId())
                     .qnaId(item.getQnaId())
                     .title(item.getTitle())
                     .content(item.getContent())
@@ -181,8 +182,6 @@ public class BoardService {
     @Transactional
     public void viewCountUp(int id) {
         Optional<Board> optBoard = boardRepository.findById(id);
-        if (optBoard.isPresent()) {
-            optBoard.get().viewCountUp();
-        }
+        optBoard.ifPresent(Board::viewCountUp);
     }
 }

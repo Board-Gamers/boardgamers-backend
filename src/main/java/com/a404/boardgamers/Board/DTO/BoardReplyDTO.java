@@ -32,6 +32,7 @@ public class BoardReplyDTO {
     @AllArgsConstructor
     @Builder
     public static class BoardReplyResponse {
+        private int id;
         private int qnaId;
         private String title;
         private String content;

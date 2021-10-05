@@ -33,8 +33,7 @@ public class GameController {
     //Map 이용한 검색 결과 얻기
     @ApiOperation(value = "필터 검색하기")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "nameKor", value = "검색할 게임 이름(한글"),
-            @ApiImplicitParam(name = "name", value = "검색할 게임 이름(영어)"),
+            @ApiImplicitParam(name = "keyword", value = "검색할 게임 키워드"),
             @ApiImplicitParam(name = "category", value = "검색할 카테고리 이름"),
             @ApiImplicitParam(name = "order", value = "정렬 조건 이름(review, rank)"),
             @ApiImplicitParam(name = "minAge", value = "최소 연령"),
@@ -50,18 +49,23 @@ public class GameController {
         int page = 1, pageSize = 10;
         String order = "rank";
         for (String key : searchRequest.keySet()) {
-            if (key.equals("page")) {
-                page = Integer.parseInt(searchRequest.get("page").toString());
-            } else if (key.equals("pageSize")) {
-                pageSize = Integer.parseInt(searchRequest.get("pageSize").toString());
-            } else if (key.equals("order")) {
-                order = searchRequest.get("order").toString().equals("review") ? "usersRated" : "rank";
-            } else {
-                try {
-                    searchKeys.put(GameSpecs.SearchKey.valueOf(key.toUpperCase()), searchRequest.get(key));
-                } catch (IllegalArgumentException e) {
-                    System.out.println("유효하지 않은 key 값 > " + key);
-                }
+            switch (key) {
+                case "page":
+                    page = Integer.parseInt(searchRequest.get("page").toString());
+                    break;
+                case "pageSize":
+                    pageSize = Integer.parseInt(searchRequest.get("pageSize").toString());
+                    break;
+                case "order":
+                    order = searchRequest.get("order").toString().equals("review") ? "usersRated" : "rank";
+                    break;
+                default:
+                    try {
+                        searchKeys.put(GameSpecs.SearchKey.valueOf(key.toUpperCase()), searchRequest.get(key));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("유효하지 않은 key 값 > " + key);
+                    }
+                    break;
             }
         }
         return searchKeys.isEmpty()
