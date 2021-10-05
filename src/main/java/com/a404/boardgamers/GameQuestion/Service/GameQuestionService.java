@@ -3,8 +3,10 @@ package com.a404.boardgamers.GameQuestion.Service;
 import com.a404.boardgamers.Game.Domain.Entity.Game;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
+import com.a404.boardgamers.GameQuestion.Domain.Entity.GameAnswerLike;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
+import com.a404.boardgamers.GameQuestion.Domain.Repository.GameAnswerLikeRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionAnswerRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionRepository;
 import com.a404.boardgamers.User.Domain.Entity.User;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +27,7 @@ import java.util.Optional;
 public class GameQuestionService {
     private final GameQuestionRepository gameQuestionRepository;
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
+    private final GameAnswerLikeRepository gameAnswerLikeRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
 
@@ -110,5 +114,30 @@ public class GameQuestionService {
         }
         gameQuestionRepository.delete(gameQuestion);
         return Response.newResult(HttpStatus.OK, "글을 삭제하였습니다.", null);
+    }
+
+    @Transactional
+    public ResponseEntity<Response> likeOnAnswer(String userId, int answerId, GameQuestionDTO.likeOnAnswerDTO requestDTO) {
+        Optional<GameQuestionAnswer> optionalGameQuestionAnswer = gameQuestionAnswerRepository.findById(answerId);
+        if (!optionalGameQuestionAnswer.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 글입니다.", null);
+        }
+        Boolean isLiked = requestDTO.getIsLiked();
+        if (isLiked == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
+        }
+        Optional<GameAnswerLike> optionalGameAnswerLike = gameAnswerLikeRepository.findByUserIdAndAndAnswerId(userId, answerId);
+        if (!optionalGameAnswerLike.isPresent()) {
+            GameAnswerLike gameAnswerLike = GameAnswerLike.builder().userId(userId).answerId(answerId).isLiked(isLiked).build();
+            gameAnswerLikeRepository.save(gameAnswerLike);
+            return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 반영되었습니다.", null);
+        }
+        GameAnswerLike gameAnswerLike = optionalGameAnswerLike.get();
+        if (gameAnswerLike.getIsLiked() == isLiked) {
+            gameAnswerLikeRepository.deleteByUserIdAndAnswerId(userId, answerId);
+            return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 취소되었습니다.", null);
+        }
+        gameAnswerLike.updateIsLiked(isLiked);
+        return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 수정되었습니다.", null);
     }
 }

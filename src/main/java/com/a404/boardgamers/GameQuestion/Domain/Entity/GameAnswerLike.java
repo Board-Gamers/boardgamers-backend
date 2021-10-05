@@ -6,23 +6,30 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
-import java.sql.Timestamp;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "game_question_answer")
+@Table(name = "game_answer_like")
+@IdClass(GameAnswerLikeId.class)
 @DynamicUpdate
 @DynamicInsert
 @Builder
-public class GameQuestionAnswer {
+public class GameAnswerLike {
 
     @Id
-    private int id;
-    private int questionId;
-    private String content;
-    private Timestamp addDate;
-    private String writerId;
+    private String userId;
+
+    @Id
+    private int answerId;
+
+    private Boolean isLiked;
+
+    public void updateIsLiked(boolean isLiked) {
+        this.isLiked = isLiked;
+    }
 }

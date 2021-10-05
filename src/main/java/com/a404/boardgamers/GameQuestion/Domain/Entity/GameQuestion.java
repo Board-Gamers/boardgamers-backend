@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @Getter
 @Entity
 @Table(name = "game_question")
-@ToString
 @DynamicUpdate
 @DynamicInsert
 public class GameQuestion {

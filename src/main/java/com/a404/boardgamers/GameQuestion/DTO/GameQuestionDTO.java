@@ -34,4 +34,12 @@ public class GameQuestionDTO {
     public static class uploadGameQuestionAnswerDTO {
         String content;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class likeOnAnswerDTO {
+        Boolean isLiked;
+    }
 }
