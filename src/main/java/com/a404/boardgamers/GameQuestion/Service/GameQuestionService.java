@@ -48,12 +48,11 @@ public class GameQuestionService {
     }
 
     public ResponseEntity<Response> getGameQuestionAnswer(int questionId) {
-        Optional<GameQuestionAnswer> optionalGameQuestionAnswer = gameQuestionAnswerRepository.findByQuestionId(questionId);
-        if (!optionalGameQuestionAnswer.isPresent()) {
+        List<GameQuestionAnswer> gameQuestionAnswerList = gameQuestionAnswerRepository.findByQuestionId(questionId);
+        if (gameQuestionAnswerList.size() == 0) {
             return Response.newResult(HttpStatus.OK, "등록된 답변이 없습니다.", null);
         }
-        GameQuestionAnswer gameQuestionAnswer = optionalGameQuestionAnswer.get();
-        return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameQuestionAnswer);
+        return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameQuestionAnswerList);
     }
 
     public ResponseEntity<Response> uploadGameQuestionAnswer(String userId, int questionId, GameQuestionDTO.uploadGameQuestionAnswerDTO requestDTO) {
