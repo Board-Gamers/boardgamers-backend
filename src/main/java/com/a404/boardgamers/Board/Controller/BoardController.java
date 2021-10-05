@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @CrossOrigin("*")
 @RequiredArgsConstructor
@@ -30,7 +32,8 @@ public class BoardController {
 
     @ApiOperation(value = "게시판에 업로드된 문의글을 가져온다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getQuestion(@PathVariable int id) {
+    public ResponseEntity<Response> getQuestion(@PathVariable int id, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        viewCountUp(id, httpServletRequest, httpServletResponse);
         return boardService.getQuestion(id);
     }
 
@@ -77,5 +80,33 @@ public class BoardController {
     @DeleteMapping("/reply")
     public ResponseEntity<Response> deleteAnswer(@RequestParam int id, HttpServletRequest httpServletRequest) {
         return boardReplyService.deleteAnswer(id, httpServletRequest);
+    }
+
+    private void viewCountUp(int id, HttpServletRequest request, HttpServletResponse response) {
+        Cookie curCookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("questionView")) {
+                    curCookie = cookie;
+                }
+            }
+        }
+
+        if (curCookie != null) {
+            if (!curCookie.getValue().contains("(" + id + ")")) {
+                boardService.viewCountUp(id);
+                curCookie.setValue(curCookie.getValue() + "&(" + id + ")");
+                curCookie.setPath("/");
+                curCookie.setMaxAge(60 * 60 * 24);
+                response.addCookie(curCookie);
+            }
+        } else {
+            boardService.viewCountUp(id);
+            Cookie cookie = new Cookie("questionView", "(" + id + ")");
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24);
+            response.addCookie(cookie);
+        }
     }
 }

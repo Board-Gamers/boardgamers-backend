@@ -42,7 +42,7 @@ public class GameController {
             @ApiImplicitParam(name = "maxPlayers", value = "최대 플레이 인원 수"),
             @ApiImplicitParam(name = "maxPlayTime", value = "최대 플레이 시간"),
             @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
-            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
+            @ApiImplicitParam(name = "pageSize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/search")
     public ResponseEntity findGames(@RequestParam(required = false) Map<String, Object> searchRequest) {
