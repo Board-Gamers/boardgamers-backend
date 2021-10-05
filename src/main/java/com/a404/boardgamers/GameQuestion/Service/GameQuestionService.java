@@ -56,6 +56,20 @@ public class GameQuestionService {
         return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameQuestionAnswer);
     }
 
+    public ResponseEntity<Response> uploadGameQuestionAnswer(String userId, int questionId, GameQuestionDTO.uploadGameQuestionAnswerDTO requestDTO) {
+        Optional<GameQuestion> optionalGameQuestion = gameQuestionRepository.findById(questionId);
+        if (!optionalGameQuestion.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 글입니다.", null);
+        }
+        String content = requestDTO.getContent();
+        if (content == null || content.equals("")) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "답변을 입력해주세요.", null);
+        }
+        GameQuestionAnswer gameQuestionAnswer = GameQuestionAnswer.builder().questionId(questionId).content(content).writerId(userId).build();
+        gameQuestionAnswerRepository.save(gameQuestionAnswer);
+        return Response.newResult(HttpStatus.OK, questionId + "번 문의글에 답변을 등록했습니다.", null);
+    }
+
     public ResponseEntity<Response> uploadGameQuestion(String userId, GameQuestionDTO.uploadGameQuestionDTO requestDTO) {
         Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
