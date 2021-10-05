@@ -1,6 +1,9 @@
 package com.a404.boardgamers.Board.DTO;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class BoardDTO {
     @Data
@@ -33,6 +36,7 @@ public class BoardDTO {
         private String addDate;
         // 조회수
         private int viewCnt;
+        private boolean isAnswered;
     }
 
     @Data

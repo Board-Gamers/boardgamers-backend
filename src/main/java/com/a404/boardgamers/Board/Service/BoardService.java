@@ -137,12 +137,15 @@ public class BoardService {
         List<BoardDTO.BoardListResponse> arr = new ArrayList<>();
         for (Board item : questionList) {
             String itemDate = TimestampToDateString.convertDate(item.getAddDate());
+            long replyCnt = boardReplyRepository.countBoardRepliesByQnaId(item.getId());
+            boolean replied = replyCnt > 0;
             arr.add(BoardDTO.BoardListResponse.builder()
                     .id(item.getId())
                     .title(item.getTitle())
                     .writerNickname(item.getWriterNickname())
                     .addDate(itemDate)
                     .viewCnt(item.getViewCnt())
+                    .isAnswered(replied)
                     .build());
         }
 
