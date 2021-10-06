@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface GameQuestionAnswerRepository extends JpaRepository<GameQuestionAnswer, Integer> {
     List<GameQuestionAnswer> findByQuestionId(int questionId);
+
+    long countGameQuestionAnswersByWriterId(String userId);
 }

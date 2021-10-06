@@ -15,4 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Optional<Review> findReviewByGameIdAndUserId(int id, int userId);
 
     List<Review> findByUserNickname(String userId, Pageable pageable);
+
+    long countReviewsByUserId(int userId);
 }

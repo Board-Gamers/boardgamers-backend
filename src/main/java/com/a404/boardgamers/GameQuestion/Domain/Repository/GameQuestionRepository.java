@@ -18,4 +18,6 @@ public interface GameQuestionRepository extends JpaRepository<GameQuestion, Inte
     Optional<GameQuestion> findById(int id);
 
     List<GameQuestion> findAllByOrderByAddDate(Pageable pageable);
+
+    long countGameQuestionsByWriterId(String writerId);
 }

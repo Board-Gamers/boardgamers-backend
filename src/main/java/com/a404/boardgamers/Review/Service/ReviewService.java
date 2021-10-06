@@ -1,16 +1,23 @@
 package com.a404.boardgamers.Review.Service;
 
+import com.a404.boardgamers.Game.Domain.Entity.Category;
 import com.a404.boardgamers.Game.Domain.Entity.Game;
+import com.a404.boardgamers.Game.Domain.Repository.CategoryRepository;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.Review.DTO.ReviewDTO;
 import com.a404.boardgamers.Review.Domain.Entity.Review;
 import com.a404.boardgamers.Review.Domain.Repository.ReviewRepository;
+import com.a404.boardgamers.User.Domain.Entity.AchievementEnum;
 import com.a404.boardgamers.User.Domain.Entity.User;
+import com.a404.boardgamers.User.Domain.Repository.UserAchievementRepository;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
+import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
+import com.a404.boardgamers.Util.StringToList;
 import com.a404.boardgamers.Util.TimestampToDateString;
 import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +28,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ReviewService {
+    private final UserService userService;
     private final ReviewRepository reviewRepository;
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
+    private final UserAchievementRepository userAchievementRepository;
+    private final CategoryRepository categoryRepository;
 
     public ResponseEntity<Response> findGameReviews(int gameId, int page, int pageSize) {
         Optional<Game> game = gameRepository.findGameById(gameId);
@@ -97,6 +108,26 @@ public class ReviewService {
                 .comment(reviewInsertRequest.getComment())
                 .build();
         reviewRepository.save(review);
+        reviewRepository.findAll();
+        // 리뷰 개수 cnt
+        long cnt = reviewRepository.countReviewsByUserId(user.get().getId());
+        // 리뷰 몇개 작성했는지 뱃지.
+        if (cnt == 1 || cnt == 5 || cnt == 10 || cnt == 20 || cnt == 50 || cnt == 100) {
+            log.error(AchievementEnum.REVIEW.ordinal() + "타입 에러 " + cnt + "와 함께 넘기기.");
+            userService.addAchievement(user.get().getId(), AchievementEnum.REVIEW.ordinal(), (int) cnt);
+        }
+
+        // 카테고리 체크하기 위해 넘기기.
+        List<String> categories = StringToList.parsing(optionalGame.get().getCategory());
+        for (String item : categories) {
+            log.error(">> 카테고리 " + item + " 처리하기~~~");
+            Optional<Category> category = categoryRepository.findCategoryByName(item);
+            if (!category.isPresent()) {
+                continue;
+            }
+            int categoryIdx = category.get().getId();
+            userService.addAchievement(user.get().getId(), 11 + categoryIdx, 1);
+        }
 
         return Response.newResult(HttpStatus.OK, "평가를 남겼습니다.", review);
     }
@@ -141,5 +172,9 @@ public class ReviewService {
         }
         reviewRepository.delete(optReview.get());
         return Response.newResult(HttpStatus.OK, "리뷰가 삭제되었습니다.", null);
+    }
+
+    public long countReviewsByUserId(int id) {
+        return reviewRepository.countReviewsByUserId(id);
     }
 }
