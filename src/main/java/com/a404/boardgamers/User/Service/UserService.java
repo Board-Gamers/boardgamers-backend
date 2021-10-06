@@ -177,5 +177,4 @@ public class UserService {
         linkedHashMap.put("list", favoriteDTOList);
         return Response.newResult(HttpStatus.OK, nickname + "유저의 즐겨찾기 목록입니다.", linkedHashMap);
     }
-
 }
