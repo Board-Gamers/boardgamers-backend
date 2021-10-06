@@ -10,4 +10,6 @@ public interface GameAnswerLikeRepository extends JpaRepository<GameAnswerLike, 
     Optional<GameAnswerLike> findByUserIdAndAndAnswerId(String userId, int answerId);
 
     void deleteByUserIdAndAnswerId(String userId, int answerId);
+
+    int countAllByAnswerIdAndIsLiked(int answerId, boolean isLiked);
 }
