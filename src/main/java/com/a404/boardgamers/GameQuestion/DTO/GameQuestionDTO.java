@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 public class GameQuestionDTO {
     @Data
     @NoArgsConstructor
@@ -15,6 +17,18 @@ public class GameQuestionDTO {
     public static class getGameQuestionDTO {
         GameQuestion gameQuestion;
         GameQuestionAnswer gameQuestionAnswer;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getGameAnswerDTO {
+        int questionId;
+        String content;
+        Timestamp addDate;
+        String writerId;
+        int likes;
     }
 
     @Data
@@ -33,5 +47,13 @@ public class GameQuestionDTO {
     @Builder
     public static class uploadGameQuestionAnswerDTO {
         String content;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class likeOnAnswerDTO {
+        Boolean isLiked;
     }
 }
