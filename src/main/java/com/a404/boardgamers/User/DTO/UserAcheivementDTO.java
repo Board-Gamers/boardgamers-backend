@@ -16,4 +16,16 @@ public class UserAcheivementDTO {
         String detail;
         String date;
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class AchievementRecordResponse {
+        int id;
+        String title;
+        String detail;
+        int count;
+        String date;
+    }
 }

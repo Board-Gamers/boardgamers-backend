@@ -144,21 +144,48 @@ public class UserService {
         return Response.newResult(HttpStatus.OK, "회원탈퇴가 완료되었습니다.", null);
     }
 
-    public ResponseEntity getAchievement(String userId) {
-        User user = userRepository.findUserByLoginId(userId).get();
+    public ResponseEntity getAchievement(String nickname) {
+        User user = userRepository.findUserByNickname(nickname).get();
 
         List<UserAchievement> userAchievements = userAchievementRepository.findUserAchievementsByUserId(user.getId());
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        ArrayList<UserAcheivementDTO.AchievementRecordResponse> record = new ArrayList<>();
         ArrayList<UserAcheivementDTO.AchievementResponse> arr = new ArrayList<>();
+        ArrayList<UserAcheivementDTO.AchievementResponse> categories = new ArrayList<>();
         for (UserAchievement item : userAchievements) {
-            Achievement achievement = achievementRepository.findAchievementById(item.getId()).get();
-            arr.add(UserAcheivementDTO.AchievementResponse.builder()
-                    .id(item.getId())
-                    .title(achievement.getTitle())
-                    .detail(achievement.getDetail())
-                    .date(TimestampToDateString.convertDate(item.getAchievedAt()))
-                    .build());
+            Achievement achievement = achievementRepository.findAchievementById(item.getAchievementId()).get();
+            if (achievement.getId() >= 12) {
+                categories.add(UserAcheivementDTO.AchievementResponse.builder()
+                        .id(item.getId())
+                        .title(achievement.getDetail())
+                        .detail(item.getDetail() + "")
+                        .date(TimestampToDateString.convertDate(item.getAchievedAt()))
+                        .build()
+                );
+            } else if (achievement.getId() >= 9) {
+                record.add(UserAcheivementDTO.AchievementRecordResponse.builder()
+                        .id(item.getAchievementId())
+                        .title(achievement.getTitle())
+                        .detail(achievement.getDetail())
+                        .date(TimestampToDateString.convertDate(item.getAchievedAt()))
+                        .count(item.getDetail())
+                        .build()
+                );
+            } else {
+                arr.add(UserAcheivementDTO.AchievementResponse.builder()
+                        .id(item.getAchievementId())
+                        .title(achievement.getTitle())
+                        .detail(achievement.getDetail())
+                        .date(TimestampToDateString.convertDate(item.getAchievedAt()))
+                        .build()
+                );
+            }
         }
-        return Response.newResult(HttpStatus.OK, "유저의 달성 목록을 불러옵니다.", arr);
+        linkedHashMap.put("award", arr);
+        linkedHashMap.put("badges", record);
+        linkedHashMap.put("conquered", categories);
+        linkedHashMap.put("percent", (double) (categories.size() / 84.0) * 100.0);
+        return Response.newResult(HttpStatus.OK, "유저의 달성 목록을 불러옵니다.", linkedHashMap);
     }
 
     @Transactional
@@ -166,6 +193,8 @@ public class UserService {
         Optional<UserAchievement> optUserAchievement = userAchievementRepository.findUserAchievementByUserIdAndAchievementId(userId, getAchievementId(type));
         log.error("사용자 ID : " + userId + " 받은 : " + type + ", 변환한 타입 " + getAchievementId(type) + " cnt " + count);
         if (type == 1) {
+            // 리뷰 개수 관련 - 사용자가 남긴 리뷰 갯수가 achievement에 들어있는 것과 일치하는 경우
+            // 1, 5, 10, 20, 50, 100
             userAchievementRepository.save(UserAchievement.builder()
                     .userId(userId)
                     .achievementId(categoryMap.get(count))
@@ -182,32 +211,21 @@ public class UserService {
             switch (type) {
                 case 0:
                     // 로그인 관련 처리 ( 연속 로그인 처리를 어떻게 하지?) detail 에 뭘 넣어야 할지 고민해보기.
-
-                    break;
-                case 1:
-                    // 리뷰 개수 관련 - 사용자가 남긴 리뷰 갯수가 achievement에 들어있는 것과 일치하는 경우
-                    // 1, 5, 10, 20, 50, 100
-
                     break;
                 case 2:
                     // 질문 개수 얘는 매번 갱신하기.
                 case 3:
                     // 질문에 답변 단 갯수 얘도 매번 갱신하기.
                     optUserAchievement.get().update(count);
-
                     break;
                 case 4:
                     // 리뷰 남길 때마다 몇 개의 카테고리를 해봤는지 남기기.
-
                 default:
                     // 카테고리 갱신
                     optUserAchievement.get().update(optUserAchievement.get().getDetail() + 1);
                     break;
-
             }
-
         }
-        userAchievementRepository.findAll();
     }
 
     public int getAchievementId(int type) {
@@ -215,7 +233,7 @@ public class UserService {
         switch (type) {
             case 0:
                 // 로그인 한 경우
-                answer = 11;
+                answer = 0;
                 break;
             case 1:
                 // 리뷰 단 경우 <- 리뷰 갯수 따라서 달라짐.

@@ -104,9 +104,7 @@ public class GameQuestionService {
                 .build();
         gameQuestionRepository.save(gameQuestion);
         long cnt = gameQuestionRepository.countGameQuestionsByWriterId(userId);
-        if (cnt > 0) {
-            userService.addAchievement(user.getId(), AchievementEnum.QUESTION.ordinal(), (int) cnt);
-        }
+        userService.addAchievement(user.getId(), AchievementEnum.QUESTION.ordinal(), (int) cnt);
         return Response.newResult(HttpStatus.OK, "글을 작성했습니다.", null);
     }
 
