@@ -176,6 +176,11 @@ public class GameService {
                     .averageRate(game.getAverageRate())
                     .predictedRate(ratePredictCalc)
                     .usersRated(game.getUsersRated())
+                    .minAge(game.getMinAge())
+                    .minPlayers(game.getMinPlayers())
+                    .maxPlayers(game.getMaxPlayers())
+                    .minPlayTime(game.getMinPlayTime())
+                    .maxPlayTime(game.getMaxPlayTime())
                     .predictedRank(item.getRank())
                     .build());
         }
