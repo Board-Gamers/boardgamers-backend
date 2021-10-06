@@ -1,11 +1,17 @@
 package com.a404.boardgamers.User.Service;
 
+import com.a404.boardgamers.Game.Domain.Entity.Game;
+import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
+import com.a404.boardgamers.Review.DTO.ReviewDTO;
 import com.a404.boardgamers.Review.Domain.Entity.Review;
 import com.a404.boardgamers.Review.Domain.Repository.ReviewRepository;
 import com.a404.boardgamers.User.DTO.UserDTO;
+import com.a404.boardgamers.User.Domain.Entity.Favorite;
 import com.a404.boardgamers.User.Domain.Entity.User;
+import com.a404.boardgamers.User.Domain.Repository.FavoriteRepository;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.Util.Response;
+import com.a404.boardgamers.Util.TimestampToDateString;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -14,16 +20,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final GameRepository gameRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
@@ -104,15 +109,29 @@ public class UserService {
         }
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("totalPageItemCnt", totalItemCount);
         linkedHashMap.put("totalPage", ((totalItemCount - 1) / pageSize) + 1);
         linkedHashMap.put("nowPage", page);
         linkedHashMap.put("nowPageSize", pageSize);
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<Review> reviewList = reviewRepository.findByUserNickname(nickname, pageRequest);
+        ArrayList<ReviewDTO.ReviewDetailResponse> list = new ArrayList<>();
 
-        linkedHashMap.put("list", reviewList);
+        for (Review item : reviewList) {
+            Game game = gameRepository.findGameById(item.getGameId()).get();
+            list.add(ReviewDTO.ReviewDetailResponse.builder()
+                    .id(item.getId())
+                    .userId(item.getUserId())
+                    .gameId(item.getGameId())
+                    .gameName(item.getGameName())
+                    .gameNameKor(game.getNameKor())
+                    .userNickname(item.getUserNickname())
+                    .comment(item.getComment())
+                    .rating(item.getRating())
+                    .createdAt(TimestampToDateString.convertDate(item.getCreatedAt()))
+                    .build());
+        }
+        linkedHashMap.put("reviews", list);
         return Response.newResult(HttpStatus.OK, nickname + "유저가 작성한 리뷰를 출력합니다.", linkedHashMap);
     }
 
@@ -124,6 +143,27 @@ public class UserService {
         }
         userRepository.delete(optionalUser.get());
         return Response.newResult(HttpStatus.OK, "회원탈퇴가 완료되었습니다.", null);
+    }
+
+    public ResponseEntity<Response> getFavorites(String nickname, int page, int pageSize) {
+        Optional<User> optionalUser = userRepository.findUserByNickname(nickname);
+        if (!optionalUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않은 유저입니다.", null);
+        }
+        User user = optionalUser.get();
+
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        int totalPageItemCnt = favoriteRepository.countByUserId(user.getLoginId());
+        linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Favorite> favoriteList = favoriteRepository.findByUserId(user.getLoginId(), pageRequest);
+        if (favoriteList.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "즐겨찾기한 게임이 없습니다.", null);
+        }
+
+        linkedHashMap.put("list", favoriteList);
+        return Response.newResult(HttpStatus.OK, nickname + "유저의 즐겨찾기 목록입니다.", linkedHashMap);
     }
 
 }
