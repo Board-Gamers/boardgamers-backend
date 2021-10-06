@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<Response> getReviewByNickname(@PathVariable String nickname, @RequestParam(required = false) String type,
+    public ResponseEntity<Response> getProfileByNickname(@PathVariable String nickname, @RequestParam(required = false) String type,
                                                         @RequestParam(defaultValue = "1") int page,
                                                         @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
         try {
