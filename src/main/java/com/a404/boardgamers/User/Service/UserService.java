@@ -161,8 +161,20 @@ public class UserService {
         if (favoriteList.size() == 0) {
             return Response.newResult(HttpStatus.OK, "즐겨찾기한 게임이 없습니다.", null);
         }
+        List<UserDTO.userFavoriteDTO> favoriteDTOList = new ArrayList<>();
+        for (int i = 0; i < favoriteList.size(); i++) {
+            Favorite favorite = favoriteList.get(i);
+            Game game = gameRepository.findGameById(favorite.getGameId()).get();
+            UserDTO.userFavoriteDTO userFavoriteDTO = UserDTO.userFavoriteDTO.builder()
+                    .gameId(game.getId())
+                    .thumbnail(game.getThumbnail())
+                    .gameName(game.getName())
+                    .gameNameKor(game.getNameKor())
+                    .build();
+            favoriteDTOList.add(userFavoriteDTO);
+        }
 
-        linkedHashMap.put("list", favoriteList);
+        linkedHashMap.put("list", favoriteDTOList);
         return Response.newResult(HttpStatus.OK, nickname + "유저의 즐겨찾기 목록입니다.", linkedHashMap);
     }
 

@@ -1,6 +1,7 @@
 package com.a404.boardgamers.User.DTO;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,14 @@ public class UserDTO {
         String newPassword;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class userFavoriteDTO {
+        int gameId;
+        String thumbnail;
+        String gameName;
+        String gameNameKor;
+    }
 }
