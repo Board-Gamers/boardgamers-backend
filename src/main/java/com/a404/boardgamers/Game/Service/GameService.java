@@ -74,7 +74,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", gameDetail);
     }
 
-    public ResponseEntity findAll(String order, int page, int pageSize) {
+    public ResponseEntity<Response> findAll(String order, int page, int pageSize) {
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         PageRequest pageRequest = order.equals("usersRated") ? PageRequest.of(page - 1, pageSize, Sort.by(order).descending()) : PageRequest.of(page - 1, pageSize, Sort.by(order));
         Page<Game> pageList = gameRepository.findAll(pageRequest);
@@ -107,7 +107,7 @@ public class GameService {
         return Response.newResult(HttpStatus.OK, "전체 게임을 검색합니다.", linkedHashMap);
     }
 
-    public ResponseEntity findGamesWithFilter(Map<GameSpecs.SearchKey, Object> search, String order, int page, int pageSize) {
+    public ResponseEntity<Response> findGamesWithFilter(Map<GameSpecs.SearchKey, Object> search, String order, int page, int pageSize) {
         Map<GameSpecs.SearchKey, Object> searchKeys = new HashMap<>();
         for (GameSpecs.SearchKey key : search.keySet()) {
             searchKeys.put(key, search.get(key));
@@ -176,6 +176,11 @@ public class GameService {
                     .averageRate(game.getAverageRate())
                     .predictedRate(ratePredictCalc)
                     .usersRated(game.getUsersRated())
+                    .minAge(game.getMinAge())
+                    .minPlayers(game.getMinPlayers())
+                    .maxPlayers(game.getMaxPlayers())
+                    .minPlayTime(game.getMinPlayTime())
+                    .maxPlayTime(game.getMaxPlayTime())
                     .predictedRank(item.getRank())
                     .build());
         }

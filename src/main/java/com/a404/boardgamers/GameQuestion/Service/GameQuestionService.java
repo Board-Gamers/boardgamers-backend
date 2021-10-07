@@ -3,8 +3,10 @@ package com.a404.boardgamers.GameQuestion.Service;
 import com.a404.boardgamers.Game.Domain.Entity.Game;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
 import com.a404.boardgamers.GameQuestion.DTO.GameQuestionDTO;
+import com.a404.boardgamers.GameQuestion.Domain.Entity.GameAnswerLike;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestion;
 import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
+import com.a404.boardgamers.GameQuestion.Domain.Repository.GameAnswerLikeRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionAnswerRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionRepository;
 import com.a404.boardgamers.User.Domain.Entity.AchievementEnum;
@@ -12,6 +14,7 @@ import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
+import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +31,7 @@ import java.util.Optional;
 public class GameQuestionService {
     private final GameQuestionRepository gameQuestionRepository;
     private final GameQuestionAnswerRepository gameQuestionAnswerRepository;
+    private final GameAnswerLikeRepository gameAnswerLikeRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final UserService userService;
@@ -52,11 +57,29 @@ public class GameQuestionService {
     }
 
     public ResponseEntity<Response> getGameQuestionAnswer(int questionId) {
+        Optional<GameQuestion> optionalGameQuestion = gameQuestionRepository.findById(questionId);
+        if (!optionalGameQuestion.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "등록된 글이 없습니다.", null);
+        }
         List<GameQuestionAnswer> gameQuestionAnswerList = gameQuestionAnswerRepository.findByQuestionId(questionId);
-        if (gameQuestionAnswerList.size() == 0) {
+        int size = gameQuestionAnswerList.size();
+        if (size == 0) {
             return Response.newResult(HttpStatus.OK, "등록된 답변이 없습니다.", null);
         }
-        return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameQuestionAnswerList);
+        List<GameQuestionDTO.getGameAnswerDTO> gameAnswerList = new ArrayList<>();
+        for (GameQuestionAnswer gameQuestionAnswer : gameQuestionAnswerList) {
+            int likes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), true);
+            int unlikes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), false);
+            GameQuestionDTO.getGameAnswerDTO gameAnswer = GameQuestionDTO.getGameAnswerDTO.builder()
+                    .questionId(questionId)
+                    .content(gameQuestionAnswer.getContent())
+                    .addDate(gameQuestionAnswer.getAddDate())
+                    .writerId(gameQuestionAnswer.getWriterId())
+                    .likes(likes - unlikes)
+                    .build();
+            gameAnswerList.add(gameAnswer);
+        }
+        return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameAnswerList);
     }
 
     @Transactional
@@ -74,7 +97,7 @@ public class GameQuestionService {
         if (content == null || content.equals("")) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "답변을 입력해주세요.", null);
         }
-        GameQuestionAnswer gameQuestionAnswer = GameQuestionAnswer.builder().questionId(questionId).content(content).writerId(userId).build();
+        GameQuestionAnswer gameQuestionAnswer = GameQuestionAnswer.builder().questionId(questionId).content(content).writerId(user.getNickname()).build();
         gameQuestionAnswerRepository.save(gameQuestionAnswer);
         long cnt = gameQuestionAnswerRepository.countGameQuestionAnswersByWriterId(userId);
         userService.addAchievement(user.getId(), AchievementEnum.ANSWER.ordinal(), (int) cnt);
@@ -129,5 +152,30 @@ public class GameQuestionService {
 
     public long countQuestionCount(String userId) {
         return gameQuestionRepository.countGameQuestionsByWriterId(userId);
+    }
+
+    @Transactional
+    public ResponseEntity<Response> likeOnAnswer(String userId, int answerId, GameQuestionDTO.likeOnAnswerDTO requestDTO) {
+        Optional<GameQuestionAnswer> optionalGameQuestionAnswer = gameQuestionAnswerRepository.findById(answerId);
+        if (!optionalGameQuestionAnswer.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 글입니다.", null);
+        }
+        Boolean isLiked = requestDTO.getIsLiked();
+        if (isLiked == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.", null);
+        }
+        Optional<GameAnswerLike> optionalGameAnswerLike = gameAnswerLikeRepository.findByUserIdAndAndAnswerId(userId, answerId);
+        if (!optionalGameAnswerLike.isPresent()) {
+            GameAnswerLike gameAnswerLike = GameAnswerLike.builder().userId(userId).answerId(answerId).isLiked(isLiked).build();
+            gameAnswerLikeRepository.save(gameAnswerLike);
+            return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 반영되었습니다.", null);
+        }
+        GameAnswerLike gameAnswerLike = optionalGameAnswerLike.get();
+        if (gameAnswerLike.getIsLiked() == isLiked) {
+            gameAnswerLikeRepository.deleteByUserIdAndAnswerId(userId, answerId);
+            return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 취소되었습니다.", null);
+        }
+        gameAnswerLike.updateIsLiked(isLiked);
+        return Response.newResult(HttpStatus.OK, "좋아요/싫어요가 수정되었습니다.", null);
     }
 }

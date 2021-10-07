@@ -1,6 +1,9 @@
 package com.a404.boardgamers.GameQuestion.Domain.Entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -14,7 +17,6 @@ import java.sql.Timestamp;
 @Getter
 @Entity
 @Table(name = "game_question")
-@ToString
 @DynamicUpdate
 @DynamicInsert
 public class GameQuestion {

@@ -20,7 +20,11 @@ public class GameRecommendDTO {
         private Double averageRate;
         private Double predictedRate;
         private int usersRated;
-        //        private int rank;
+        private int minPlayers;
+        private int maxPlayers;
+        private int minPlayTime;
+        private int maxPlayTime;
+        private int minAge;
         private int predictedRank;
     }
 }

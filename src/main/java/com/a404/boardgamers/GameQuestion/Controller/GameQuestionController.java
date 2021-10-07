@@ -63,4 +63,16 @@ public class GameQuestionController {
         }
         return gameQuestionService.deleteQuestion(userId, questionId);
     }
+
+    @PostMapping("/qna/like")
+    public ResponseEntity<Response> likeOnAnswer(HttpServletRequest request, @RequestParam Integer answerId, @RequestBody GameQuestionDTO.likeOnAnswerDTO requestDTO) {
+        String userId = TokenExtraction.getLoginId(request);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
+        }
+        if (answerId == null) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 확인해주세요.", null);
+        }
+        return gameQuestionService.likeOnAnswer(userId, answerId, requestDTO);
+    }
 }

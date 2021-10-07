@@ -44,7 +44,7 @@ public class GameController {
             @ApiImplicitParam(name = "pageSize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/search")
-    public ResponseEntity findGames(@RequestParam(required = false) Map<String, Object> searchRequest) {
+    public ResponseEntity<Response> findGames(@RequestParam(required = false) Map<String, Object> searchRequest) {
         Map<GameSpecs.SearchKey, Object> searchKeys = new HashMap<>();
         int page = 1, pageSize = 10;
         String order = "rank";
