@@ -57,7 +57,7 @@ public class GameQuestionService {
         return Response.newResult(HttpStatus.OK, gameId + "번 QnA를 불러왔습니다.", gameQuestionList);
     }
 
-    public ResponseEntity<Response> getGameQuestionAnswer(int questionId) {
+    public ResponseEntity<Response> getGameQuestionAnswer(String userId, int questionId) {
         Optional<GameQuestion> optionalGameQuestion = gameQuestionRepository.findById(questionId);
         if (!optionalGameQuestion.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "등록된 글이 없습니다.", null);
@@ -67,18 +67,32 @@ public class GameQuestionService {
         if (size == 0) {
             return Response.newResult(HttpStatus.OK, "등록된 답변이 없습니다.", null);
         }
-        List<GameQuestionDTO.getGameAnswerDTO> gameAnswerList = new ArrayList<>();
+        GameQuestionDTO.GameAnswerDTO.GameAnswerDTOBuilder gameAnswerDTOBuilder;
+        List<GameQuestionDTO.GameAnswerDTO> gameAnswerList = new ArrayList<>();
+        GameQuestionDTO.GameAnswerDTO gameAnswerDTO;
         for (GameQuestionAnswer gameQuestionAnswer : gameQuestionAnswerList) {
+
             int likes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), true);
             int unlikes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), false);
-            GameQuestionDTO.getGameAnswerDTO gameAnswer = GameQuestionDTO.getGameAnswerDTO.builder()
+            gameAnswerDTOBuilder = GameQuestionDTO.GameAnswerDTO.builder()
                     .questionId(questionId)
                     .content(gameQuestionAnswer.getContent())
                     .addDate(gameQuestionAnswer.getAddDate())
                     .writerId(gameQuestionAnswer.getWriterId())
-                    .likes(likes - unlikes)
-                    .build();
-            gameAnswerList.add(gameAnswer);
+                    .likes(likes - unlikes);
+            Optional<GameAnswerLike> optionalGameAnswerLike = gameAnswerLikeRepository.findByUserIdAndAndAnswerId(userId, gameQuestionAnswer.getId());
+
+            if (!optionalGameAnswerLike.isPresent()) { // 아무것도 안 누름
+                gameAnswerDTO = gameAnswerDTOBuilder.build();
+            } else {
+                GameAnswerLike gameAnswerLike = optionalGameAnswerLike.get();
+                if (gameAnswerLike.getIsLiked()) { // 좋아요 누름
+                    gameAnswerDTO = gameAnswerDTOBuilder.isLiked(true).build();
+                } else { // 싫어요 누름
+                    gameAnswerDTO = gameAnswerDTOBuilder.isLiked(false).build();
+                }
+            }
+            gameAnswerList.add(gameAnswerDTO);
         }
         return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameAnswerList);
     }
@@ -148,10 +162,6 @@ public class GameQuestionService {
         }
         gameQuestionRepository.delete(gameQuestion);
         return Response.newResult(HttpStatus.OK, "글을 삭제하였습니다.", null);
-    }
-
-    public long countQuestionCount(String userId) {
-        return gameQuestionRepository.countGameQuestionsByWriterId(userId);
     }
 
     @Transactional

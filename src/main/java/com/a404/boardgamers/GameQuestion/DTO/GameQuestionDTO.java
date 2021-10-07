@@ -20,15 +20,15 @@ public class GameQuestionDTO {
     }
 
     @Data
-    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class getGameAnswerDTO {
+    public static class GameAnswerDTO {
         int questionId;
         String content;
         Timestamp addDate;
         String writerId;
         int likes;
+        Boolean isLiked;
     }
 
     @Data

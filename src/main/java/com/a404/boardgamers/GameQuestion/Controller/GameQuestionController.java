@@ -19,15 +19,17 @@ public class GameQuestionController {
     private final GameQuestionService gameQuestionService;
 
     @GetMapping("/qna")
-    public ResponseEntity<Response> getGameQnA(@RequestParam(required = false) Integer gameId,
+    public ResponseEntity<Response> getGameQnA(HttpServletRequest request,
+                                               @RequestParam(required = false) Integer gameId,
                                                @RequestParam(required = false) Integer questionId,
                                                @RequestParam(defaultValue = "1") int page,
                                                @RequestParam(defaultValue = "10") int pageSize) {
+        String userId = TokenExtraction.getLoginId(request);
 
         if (gameId != null && questionId == null) {
             return gameQuestionService.getGameQuestion(gameId, page, pageSize);
         } else if (gameId == null && questionId != null) {
-            return gameQuestionService.getGameQuestionAnswer(questionId);
+            return gameQuestionService.getGameQuestionAnswer(userId, questionId);
         } else if (gameId == null && questionId == null) {
             return gameQuestionService.getAllGameQuestion(page, pageSize);
         }
