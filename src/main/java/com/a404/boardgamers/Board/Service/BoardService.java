@@ -59,7 +59,6 @@ public class BoardService {
                 .addDate(questionUploadedDate)
                 .viewCnt(question.get().getViewCnt())
                 .build();
-        // 조회수 반영 로직 고민해보기.
 
         // 답변 추가하기.
         List<BoardReply> answers = boardReplyRepository.findBoardRepliesByQnaId(id);

@@ -10,7 +10,6 @@ public class StringToList {
         int to = string.indexOf("'", from + 1);
         while (from != -1 && to != -1) {
             String piece = string.substring(from + 1, to);
-            System.out.println(from + " " + to + ": " + piece);
             result.add(piece);
             from = string.indexOf("'", to + 1);
             to = string.indexOf("'", from + 1);

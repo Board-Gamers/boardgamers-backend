@@ -79,7 +79,7 @@ public class UserService {
         }
         User user = optionalUser.get();
         Optional<User> checkNickUser = userRepository.findUserByNickname(requestDTO.getNickname());
-        if (checkNickUser.isPresent()) {
+        if (!user.getNickname().equals(requestDTO.getNickname()) && checkNickUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.", null);
         }
         user.updateInfo(requestDTO.getNickname(), requestDTO.getAge(), requestDTO.getGender());

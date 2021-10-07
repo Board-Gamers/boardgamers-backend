@@ -54,7 +54,7 @@ public class GameDTO {
         private int usersRated;
         private Double averageRate;
         private int rank;
-        boolean isSaved;
+        private boolean isSaved;
     }
 
 }
