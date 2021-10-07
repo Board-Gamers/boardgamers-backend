@@ -7,7 +7,6 @@ import com.a404.boardgamers.Game.Domain.Entity.GameRecommend;
 import com.a404.boardgamers.Game.Domain.Entity.GameSpecs;
 import com.a404.boardgamers.Game.Domain.Repository.GameRecommendRepository;
 import com.a404.boardgamers.Game.Domain.Repository.GameRepository;
-import com.a404.boardgamers.Review.Domain.Repository.ReviewDataRepository;
 import com.a404.boardgamers.User.Domain.Entity.Favorite;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.FavoriteRepository;
@@ -31,10 +30,9 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final GameRecommendRepository gameRecommendRepository;
-    private final ReviewDataRepository reviewDataRepository;
     private final FavoriteRepository favoriteRepository;
 
-    public ResponseEntity<Response> getGameInformation(int id) {
+    public ResponseEntity<Response> getGameInformation(String userId, int id) {
         Optional<Game> item = gameRepository.findGameById(id);
         if (!item.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "불가능한 접근입니다.", null);
@@ -48,7 +46,7 @@ public class GameService {
         List<String> artist = parsing(game.getArtist());
         List<String> publisher = parsing(game.getPublisher());
 
-        GameDTO.GameDetailResponse gameDetail = GameDTO.GameDetailResponse.builder()
+        GameDTO.GameDetailResponse.GameDetailResponseBuilder gameDetailResponseBuilder = GameDTO.GameDetailResponse.builder()
                 .id(item.get().getId())
                 .name(item.get().getName())
                 .nameKor(titleKor)
@@ -68,10 +66,16 @@ public class GameService {
                 .publisher(publisher)
                 .usersRated(item.get().getUsersRated())
                 .averageRate(item.get().getAverageRate())
-                .rank(item.get().getRank())
-                .build();
+                .rank(item.get().getRank());
+        GameDTO.GameDetailResponse gameDetailResponse;
+        Optional<Favorite> optionalFavorite = favoriteRepository.findAllByUserIdAndGameId(userId, id);
+        if (optionalFavorite.isPresent()) {
+            gameDetailResponse = gameDetailResponseBuilder.isSaved(true).build();
+        } else {
+            gameDetailResponse = gameDetailResponseBuilder.isSaved(false).build();
+        }
 
-        return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", gameDetail);
+        return Response.newResult(HttpStatus.OK, "게임 정보를 불러왔습니다.", gameDetailResponse);
     }
 
     public ResponseEntity<Response> findAll(String order, int page, int pageSize) {

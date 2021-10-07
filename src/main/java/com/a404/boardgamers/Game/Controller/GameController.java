@@ -25,8 +25,9 @@ public class GameController {
 
     @ApiOperation(value = "게임 상세 정보를 가져온다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getGameInformation(@PathVariable int id) {
-        return gameService.getGameInformation(id);
+    public ResponseEntity<Response> getGameInformation(HttpServletRequest request, @PathVariable int id) {
+        String userId = TokenExtraction.getLoginId(request);
+        return gameService.getGameInformation(userId, id);
     }
 
 
