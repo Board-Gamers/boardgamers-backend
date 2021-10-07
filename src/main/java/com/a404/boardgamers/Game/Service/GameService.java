@@ -76,7 +76,7 @@ public class GameService {
 
     public ResponseEntity<Response> findAll(String order, int page, int pageSize) {
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        PageRequest pageRequest = order.equals("usersRated") ? PageRequest.of(page - 1, pageSize, Sort.by(order).descending()) : PageRequest.of(page - 1, pageSize, Sort.by(order));
+        PageRequest pageRequest = !order.equals("rank") ? PageRequest.of(page - 1, pageSize, Sort.by(order).descending()) : PageRequest.of(page - 1, pageSize, Sort.by(order));
         Page<Game> pageList = gameRepository.findAll(pageRequest);
         linkedHashMap.put("totalPageItemCnt", pageList.getTotalElements());
         linkedHashMap.put("totalPage", pageList.getTotalPages());
