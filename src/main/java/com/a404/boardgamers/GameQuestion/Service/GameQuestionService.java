@@ -14,8 +14,8 @@ import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
 import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
-import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GameQuestionService {
@@ -101,6 +102,7 @@ public class GameQuestionService {
         gameQuestionAnswerRepository.save(gameQuestionAnswer);
         long cnt = gameQuestionAnswerRepository.countGameQuestionAnswersByWriterId(userId);
         userService.addAchievement(user.getId(), AchievementEnum.ANSWER.ordinal(), (int) cnt);
+        log.debug("");
         return Response.newResult(HttpStatus.OK, questionId + "번 문의글에 답변을 등록했습니다.", null);
     }
 
