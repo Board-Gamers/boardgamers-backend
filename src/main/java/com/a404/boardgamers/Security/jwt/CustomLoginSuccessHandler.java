@@ -24,7 +24,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token);
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
-        response.getWriter().printf("{\"nickname\":\"%s\",\"isAdmin\":%s}", user.getNickname(), user.isAdmin());
+        response.getWriter().printf("{\"nickname\":\"%s\",\"isAdmin\":%s,\"userId\":\"%d\"}", user.getNickname(), user.isAdmin(), user.getId());
         userService.addAchievement(user.getId(), 11, 1);
     }
 }
