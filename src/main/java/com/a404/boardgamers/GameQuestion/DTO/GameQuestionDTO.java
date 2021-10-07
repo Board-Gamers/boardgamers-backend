@@ -37,7 +37,6 @@ public class GameQuestionDTO {
     @Builder
     public static class uploadGameQuestionDTO {
         String title;
-        String content;
         Integer gameId;
     }
 

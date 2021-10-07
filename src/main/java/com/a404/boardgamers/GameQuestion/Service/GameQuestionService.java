@@ -113,7 +113,7 @@ public class GameQuestionService {
         }
         User user = optionalUser.get();
         String nickname = user.getNickname();
-        if (requestDTO.getTitle() == null || requestDTO.getContent() == null || requestDTO.getGameId() == null) {
+        if (requestDTO.getTitle() == null || requestDTO.getGameId() == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터를 모두 입력해주세요.", null);
         }
         Optional<Game> optionalGame = gameRepository.findGameById(requestDTO.getGameId());
