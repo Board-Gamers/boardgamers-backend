@@ -10,4 +10,6 @@ public interface GameQuestionAnswerRepository extends JpaRepository<GameQuestion
     Optional<GameQuestionAnswer> findById(int id);
 
     List<GameQuestionAnswer> findByQuestionId(int questionId);
+
+    long countGameQuestionAnswersByWriterId(String userId);
 }

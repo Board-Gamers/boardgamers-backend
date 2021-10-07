@@ -9,8 +9,10 @@ import com.a404.boardgamers.GameQuestion.Domain.Entity.GameQuestionAnswer;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameAnswerLikeRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionAnswerRepository;
 import com.a404.boardgamers.GameQuestion.Domain.Repository.GameQuestionRepository;
+import com.a404.boardgamers.User.Domain.Entity.AchievementEnum;
 import com.a404.boardgamers.User.Domain.Entity.User;
 import com.a404.boardgamers.User.Domain.Repository.UserRepository;
+import com.a404.boardgamers.User.Service.UserService;
 import com.a404.boardgamers.Util.Response;
 import com.a404.boardgamers.Util.TokenExtraction;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class GameQuestionService {
     private final GameAnswerLikeRepository gameAnswerLikeRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
+    private final UserService userService;
 
     public ResponseEntity<Response> getAllGameQuestion(int page, int pageSize) {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
@@ -79,6 +82,7 @@ public class GameQuestionService {
         return Response.newResult(HttpStatus.OK, questionId + "번 문의에 대한 답변입니다.", gameAnswerList);
     }
 
+    @Transactional
     public ResponseEntity<Response> uploadGameQuestionAnswer(String userId, int questionId, GameQuestionDTO.uploadGameQuestionAnswerDTO requestDTO) {
         Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
@@ -95,9 +99,12 @@ public class GameQuestionService {
         }
         GameQuestionAnswer gameQuestionAnswer = GameQuestionAnswer.builder().questionId(questionId).content(content).writerId(user.getNickname()).build();
         gameQuestionAnswerRepository.save(gameQuestionAnswer);
+        long cnt = gameQuestionAnswerRepository.countGameQuestionAnswersByWriterId(userId);
+        userService.addAchievement(user.getId(), AchievementEnum.ANSWER.ordinal(), (int) cnt);
         return Response.newResult(HttpStatus.OK, questionId + "번 문의글에 답변을 등록했습니다.", null);
     }
 
+    @Transactional
     public ResponseEntity<Response> uploadGameQuestion(String userId, GameQuestionDTO.uploadGameQuestionDTO requestDTO) {
         Optional<User> optionalUser = userRepository.findUserByLoginId(userId);
         if (!optionalUser.isPresent()) {
@@ -119,6 +126,8 @@ public class GameQuestionService {
                 .writerId(nickname)
                 .build();
         gameQuestionRepository.save(gameQuestion);
+        long cnt = gameQuestionRepository.countGameQuestionsByWriterId(userId);
+        userService.addAchievement(user.getId(), AchievementEnum.QUESTION.ordinal(), (int) cnt);
         return Response.newResult(HttpStatus.OK, "글을 작성했습니다.", null);
     }
 
@@ -139,6 +148,10 @@ public class GameQuestionService {
         }
         gameQuestionRepository.delete(gameQuestion);
         return Response.newResult(HttpStatus.OK, "글을 삭제하였습니다.", null);
+    }
+
+    public long countQuestionCount(String userId) {
+        return gameQuestionRepository.countGameQuestionsByWriterId(userId);
     }
 
     @Transactional

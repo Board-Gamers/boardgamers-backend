@@ -4,9 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @NoArgsConstructor
@@ -20,6 +18,7 @@ import java.sql.Timestamp;
 @DynamicInsert
 public class BoardReply {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int qnaId;
     private String title;

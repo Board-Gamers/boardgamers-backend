@@ -56,7 +56,9 @@ public class UserController {
             } else if (type.equals("review")) {
                 return userService.getReviewByNickname(nickname, page, pageSize);
             } else if (type.equals("favorite")) {
-                return userService.getFavorites(nickname, page, pageSize);
+                return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+            } else if (type.equals("achievement")) {
+                return userService.getAchievement(nickname);
             }
         } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
@@ -75,4 +77,5 @@ public class UserController {
         }
         return userService.deleteUser(userId);
     }
+
 }

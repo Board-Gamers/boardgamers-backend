@@ -114,7 +114,7 @@ public class GameService {
         }
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        PageRequest pageRequest = order.equals("usersRated") ? PageRequest.of(page - 1, pageSize, Sort.by(order).descending()) : PageRequest.of(page - 1, pageSize, Sort.by(order));
+        PageRequest pageRequest = !order.equals("rank") ? PageRequest.of(page - 1, pageSize, Sort.by(order).descending()) : PageRequest.of(page - 1, pageSize, Sort.by(order));
         Page<Game> pageList = gameRepository.findAll(GameSpecs.searchWith(searchKeys), pageRequest);
 
         linkedHashMap.put("totalPageItemCnt", pageList.getTotalElements());

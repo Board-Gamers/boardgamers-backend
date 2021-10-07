@@ -57,7 +57,7 @@ public class GameController {
                     pageSize = Integer.parseInt(searchRequest.get("pageSize").toString());
                     break;
                 case "order":
-                    order = searchRequest.get("order").toString().equals("review") ? "usersRated" : "rank";
+                    order = searchRequest.get("order").toString().equals("review") ? "usersRated" : searchRequest.get("order").toString().equals("rate") ? "averageRate" : "rank";
                     break;
                 default:
                     try {
