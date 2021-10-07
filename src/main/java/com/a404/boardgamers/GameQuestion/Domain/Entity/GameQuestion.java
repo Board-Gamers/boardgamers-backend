@@ -21,9 +21,8 @@ import java.sql.Timestamp;
 @DynamicInsert
 public class GameQuestion {
     @Builder
-    public GameQuestion(String title, String content, int gameId, String writerId) {
+    public GameQuestion(String title, int gameId, String writerId) {
         this.title = title;
-        this.content = content;
         this.gameId = gameId;
         this.writerId = writerId;
     }
@@ -31,7 +30,6 @@ public class GameQuestion {
     @Id
     private int id;
     private String title;
-    private String content;
     private Timestamp addDate;
     private int gameId;
     private String writerId;

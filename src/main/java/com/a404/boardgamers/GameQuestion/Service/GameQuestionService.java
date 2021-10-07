@@ -102,7 +102,6 @@ public class GameQuestionService {
         gameQuestionAnswerRepository.save(gameQuestionAnswer);
         long cnt = gameQuestionAnswerRepository.countGameQuestionAnswersByWriterId(userId);
         userService.addAchievement(user.getId(), AchievementEnum.ANSWER.ordinal(), (int) cnt);
-        log.debug("");
         return Response.newResult(HttpStatus.OK, questionId + "번 문의글에 답변을 등록했습니다.", null);
     }
 
@@ -123,7 +122,6 @@ public class GameQuestionService {
         }
         GameQuestion gameQuestion = GameQuestion.builder()
                 .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
                 .gameId(requestDTO.getGameId())
                 .writerId(nickname)
                 .build();
