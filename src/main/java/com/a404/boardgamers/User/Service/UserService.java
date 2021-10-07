@@ -235,10 +235,9 @@ public class UserService {
                     break;
                 case 2:
                     // 질문 개수 얘는 매번 갱신하기.
-                    break;
                 case 3:
                     // 질문에 답변 단 갯수 얘도 매번 갱신하기.
-                    optUserAchievement.get().update(count + 1);
+                    optUserAchievement.get().update(count);
                     break;
                 case 4:
                     // 리뷰 남길 때마다 몇 개의 카테고리를 해봤는지 남기기.
