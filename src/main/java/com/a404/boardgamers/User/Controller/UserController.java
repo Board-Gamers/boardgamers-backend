@@ -56,7 +56,7 @@ public class UserController {
             } else if (type.equals("review")) {
                 return userService.getReviewByNickname(nickname, page, pageSize);
             } else if (type.equals("favorite")) {
-                return Response.newResult(HttpStatus.OK, "즐겨찾기 메뉴", null);
+                return userService.getFavorites(nickname, page, pageSize);
             } else if (type.equals("achievement")) {
                 return userService.getAchievement(nickname);
             }

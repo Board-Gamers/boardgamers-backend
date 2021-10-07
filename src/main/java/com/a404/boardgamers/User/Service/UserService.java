@@ -165,7 +165,7 @@ public class UserService {
         return Response.newResult(HttpStatus.OK, "회원탈퇴가 완료되었습니다.", null);
     }
 
-    public ResponseEntity getAchievement(String nickname) {
+    public ResponseEntity<Response> getAchievement(String nickname) {
         User user = userRepository.findUserByNickname(nickname).get();
 
         List<UserAchievement> userAchievements = userAchievementRepository.findUserAchievementsByUserId(user.getId());
@@ -235,12 +235,14 @@ public class UserService {
                     break;
                 case 2:
                     // 질문 개수 얘는 매번 갱신하기.
+                    break;
                 case 3:
                     // 질문에 답변 단 갯수 얘도 매번 갱신하기.
                     optUserAchievement.get().update(count);
                     break;
                 case 4:
                     // 리뷰 남길 때마다 몇 개의 카테고리를 해봤는지 남기기.
+                    break;
                 default:
                     // 카테고리 갱신
                     optUserAchievement.get().update(optUserAchievement.get().getDetail() + 1);
