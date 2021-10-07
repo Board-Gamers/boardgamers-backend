@@ -23,6 +23,7 @@ public class GameQuestionDTO {
     @AllArgsConstructor
     @Builder
     public static class GameAnswerDTO {
+        int id;
         int questionId;
         String content;
         Timestamp addDate;

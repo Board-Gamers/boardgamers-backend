@@ -75,6 +75,7 @@ public class GameQuestionService {
             int likes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), true);
             int unlikes = gameAnswerLikeRepository.countAllByAnswerIdAndIsLiked(gameQuestionAnswer.getId(), false);
             gameAnswerDTOBuilder = GameQuestionDTO.GameAnswerDTO.builder()
+                    .id(gameQuestionAnswer.getId())
                     .questionId(questionId)
                     .content(gameQuestionAnswer.getContent())
                     .addDate(gameQuestionAnswer.getAddDate())
